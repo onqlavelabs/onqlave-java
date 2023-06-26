@@ -1,4 +1,4 @@
-package com.onqlave.contracts.configs;
+package com.onqlave.contract.config;
 
 public class Configuration {
     private Credential credential;

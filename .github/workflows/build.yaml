@@ -1,0 +1,21 @@
+name: Maven CI/CD
+
+on:
+    pull_request:
+      branches: [ dev ]
+
+jobs:
+  build_and_test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'oracle'
+          java-version: '17'
+
+      - name: Build project with Maven
+        run: mvn -B package --file pom.xml

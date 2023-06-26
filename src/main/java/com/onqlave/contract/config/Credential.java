@@ -1,4 +1,4 @@
-package com.onqlave.contracts.configs;
+package com.onqlave.contract.config;
 
 public class Credential {
     private String accessKey;

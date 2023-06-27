@@ -1,10 +1,10 @@
-package com.onqlave.contract.config;
+package com.onqlave.contract;
 
 import javax.xml.datatype.Duration;
 
 
 public class RetrySettings {
-    private   int count;
+    private int count;
     private Duration waitTime;
     private Duration maxWaitTime;
 
@@ -36,5 +36,9 @@ public class RetrySettings {
 
     public void setMaxWaitTime(Duration maxWaitTime) {
         this.maxWaitTime = maxWaitTime;
+    }
+
+    public void Valid() throws Exception {
+        // TODO:
     }
 }

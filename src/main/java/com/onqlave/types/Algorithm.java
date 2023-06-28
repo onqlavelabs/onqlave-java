@@ -1,6 +1,10 @@
 package com.onqlave.types;
 
-public class Algorithm {
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.Arrays;
+
+public class Algorithm implements AlgorithmSeriliser, AlgorithmDeserialiser {
     private byte version;
     private byte algo;
     private byte[] key;
@@ -11,6 +15,9 @@ public class Algorithm {
         this.key = key;
     }
 
+    public Algorithm() {
+
+    }
     public byte getVersion() {
         return version;
     }
@@ -20,7 +27,7 @@ public class Algorithm {
     }
 
     public byte getAlgo() {
-        return algo;
+        return this.algo;
     }
 
     public void setAlgo(byte algo) {
@@ -35,15 +42,60 @@ public class Algorithm {
         this.key = key;
     }
 
-    public AlgorithmSeriliser NewAlgorithmSerialiser(byte version, String algo, byte[] key) {
-//        byte algoValue = (byte)AlgorithmTypeValue.fromValue(algo);
-//        return  new Algorithm(version, algoValue, key);
-        return null;
+
+    public  AlgorithmSeriliser NewAlgorithmSerialiser(byte version, String algo, byte[] key) {
+        byte algoValue = (byte) AlgorithmTypeValue.fromValue(algo);
+        return new Algorithm(version, algoValue, key);
     }
 
     public static AlgorithmDeserialiser NewAlgorithmDeserialiser() {
-        return null;
+        return new Algorithm();
     }
 
 
+    @Override
+    public byte[] Key() {
+        return key;
+    }
+
+    @Override
+    public byte Version() {
+        return version;
+    }
+
+    @Override
+    public String Algorithm() {
+        return AlgorithmTypeName.fromValue(algo);
+    }
+
+    @Override
+    public byte[] Serialise() throws Exception {
+        ByteBuffer buffer = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN);
+        buffer.putInt(7 + key.length);
+        buffer.put(version);
+        buffer.put(algo);
+        buffer.put((byte) key.length);
+        buffer.put(key);
+        buffer.flip();
+        byte[] serialised = new byte[buffer.remaining()];
+        buffer.get(serialised);
+        return serialised;
+    }
+
+    @Override
+    public int Deserialise(byte[] buffer) throws Exception {
+        if (buffer.length < 7) {
+            throw new Exception("[Deserialise] Invalid Cipher Data");
+        }
+        int headerLen = ByteBuffer.wrap(buffer, 0, 4).order(ByteOrder.BIG_ENDIAN).getInt();
+        if (buffer.length < headerLen) {
+            throw new Exception("[Deserialise] Invalid Cipher Data");
+        }
+        version = buffer[4];
+        algo = buffer[5];
+        byte keyLen = buffer[6];
+        key = Arrays.copyOfRange(buffer, 7, 7 + keyLen);
+        return headerLen;
+    }
 }
+

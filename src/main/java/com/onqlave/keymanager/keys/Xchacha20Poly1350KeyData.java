@@ -1,14 +1,15 @@
 package com.onqlave.keymanager.keys;
 
 import com.onqlave.types.KeyData;
+import com.onqlave.types.KeyMaterialType;
 
 public class Xchacha20Poly1350KeyData implements KeyData {
     public String typeURL;
     public byte[] value;
-    public int keyMaterialType;
+    public KeyMaterialType keyMaterialType;
     public int version;
 
-    public Xchacha20Poly1350KeyData(String typeURL, byte[] value, int keyMaterialType, int version) {
+    public Xchacha20Poly1350KeyData(String typeURL, byte[] value, KeyMaterialType keyMaterialType, int version) {
         this.typeURL = typeURL;
         this.value = value;
         this.keyMaterialType = keyMaterialType;
@@ -17,7 +18,7 @@ public class Xchacha20Poly1350KeyData implements KeyData {
 
     @Override
     public byte[] GetValue() throws Exception {
-        return new byte[0];
+        return this.value;
     }
 
     @Override
@@ -27,16 +28,16 @@ public class Xchacha20Poly1350KeyData implements KeyData {
 
     @Override
     public String GetTypeURL() {
-        return null;
+        return this.typeURL;
     }
 
     @Override
-    public int GetKeyMaterialType() {
-        return 0;
+    public KeyMaterialType GetKeyMaterialType() {
+        return this.keyMaterialType;
     }
 
     @Override
     public int GetVersion() {
-        return 0;
+        return this.version;
     }
 }

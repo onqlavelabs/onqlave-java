@@ -15,6 +15,12 @@ public class AesGcmKeyData implements KeyData {
         this.version = version;
     }
 
+    public AesGcmKeyData(byte[] value, int keyMaterialType, int version) {
+        this.value = value;
+        this.keyMaterialType = keyMaterialType;
+        this.version = version;
+    }
+
     @Override
     public byte[] GetValue() throws Exception {
         return new byte[0];

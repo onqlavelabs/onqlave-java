@@ -25,7 +25,7 @@ public class AesGcmFactory implements KeyFactory {
         byte[] keyData = this.randomService.GetRandomBytes(format.Size());
         return new AesGcmKey(
                 this.idService.NewKeyID(), operation, new AesGcmKeyData(
-                keyData, KeyMaterialType.KeyMaterialSYMMETRIC.getValue(), 0));
+                keyData, KeyMaterialType.KeyMaterialSYMMETRIC, 0));
     }
 
     @Override
@@ -36,7 +36,7 @@ public class AesGcmFactory implements KeyFactory {
         }
 
         return new AesGcmKey(this.idService.NewKeyID(), operation,
-                new AesGcmKeyData(keyData, KeyMaterialType.KeyMaterialSYMMETRIC.getValue(), 0));
+                new AesGcmKeyData(keyData, KeyMaterialType.KeyMaterialSYMMETRIC, 0));
     }
 
     @Override

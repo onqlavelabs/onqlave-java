@@ -17,16 +17,16 @@ public class AesGcmKey implements Key {
 
     @Override
     public int KeyID() {
-        return 0;
+        return this.keyID;
     }
 
     @Override
     public KeyOperation Operation() {
-        return null;
+        return this.operation;
     }
 
     @Override
     public KeyData Data() {
-        return null;
+        return this.data;
     }
 }

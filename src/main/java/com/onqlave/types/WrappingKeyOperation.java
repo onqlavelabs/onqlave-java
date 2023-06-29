@@ -1,7 +1,7 @@
 package com.onqlave.types;
 
 public interface WrappingKeyOperation {
-    public KeyFormat GetFormat();
+    KeyFormat GetFormat();
 
-    public WrappingKeyFactory GetFactory();
+    WrappingKeyFactory GetFactory();
 }

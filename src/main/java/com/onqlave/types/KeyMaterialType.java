@@ -1,7 +1,7 @@
 package com.onqlave.types;
 
 public enum KeyMaterialType {
-    KeyMaterialUNKNOWNKEYMATERIAL(0),
+    UNKNOWN(0),
     KeyMaterialSYMMETRIC(1),
     KeyMaterialASYMMETRICPRIVATE(2),
     KeyMaterialASYMMETRICPUBLIC(3),

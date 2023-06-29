@@ -1,7 +1,7 @@
 package com.onqlave.service;
 
 public interface IDService {
-    public String NewStringID();
+    String NewStringID();
 
-    public int NewKeyID();
+    int NewKeyID();
 }

@@ -20,6 +20,7 @@ import org.javatuples.Tuple;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,7 +34,12 @@ public class Encryption {
     public Encryption(Credential credential, RetrySettings retrySettings, String ArxURL, Boolean debug ) {
 
         Configuration configuration = new Configuration(credential,retrySettings,ArxURL, debug);
-        CPRNGService randomService = new CPRNGServiceImpl();
+        CPRNGService randomService ;
+        try {
+             randomService = new CPRNGServiceImpl();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
         IDService idService = new IDServiceImpl(randomService);
         KeyManager keyManager = new KeyManagerImpl(configuration, randomService);
         KeyFactory aesGcmKeyFactory = new AesGcmFactory(idService,randomService);

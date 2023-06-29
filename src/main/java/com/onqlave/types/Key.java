@@ -1,7 +1,7 @@
 package com.onqlave.types;
 
 public interface Key {
-    public int KeyID();
+    int KeyID();
 
     KeyOperation Operation();
 

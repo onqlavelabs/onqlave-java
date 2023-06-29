@@ -14,7 +14,6 @@ public class KeyManagerImpl implements KeyManager {
 
     public Map<String, WrappingKeyOperation> operation;
 
-    //constructor
     public KeyManagerImpl(Configuration configuration, CPRNGService randomService) {
         //TODO: implement constructor
         this.configuration = configuration;

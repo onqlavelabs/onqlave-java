@@ -1,7 +1,7 @@
 package com.onqlave.types;
 
 public enum HashType {
-    UNKNOWNHASH(0),
+    UNKNOWN(0),
     SHA1(1),
     SHA384(2),
     SHA256(3),

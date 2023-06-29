@@ -10,11 +10,11 @@ import java.util.Base64;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class HasherImpl implements Hasher {
+public class HashImpl implements Hasher {
     private static final String DIGEST_ALGORITHM = "SHA-512";
     private static final String SIGNATURE_ALGORITHM = "HmacSHA512";
 
-    public HasherImpl() {
+    public HashImpl() {
     }
 
     @Override

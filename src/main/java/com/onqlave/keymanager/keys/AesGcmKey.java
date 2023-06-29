@@ -9,10 +9,10 @@ public class AesGcmKey implements Key {
     public AesGcmKeyData data;
     public int keyID;
 
-    public AesGcmKey(KeyOperation operation, AesGcmKeyData data, int keyID) {
+    public AesGcmKey(int keyID, KeyOperation operation, AesGcmKeyData data) {
+        this.keyID = keyID;
         this.operation = operation;
         this.data = data;
-        this.keyID = keyID;
     }
 
     @Override

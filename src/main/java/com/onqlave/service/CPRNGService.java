@@ -3,7 +3,9 @@ package com.onqlave.service;
 import java.io.Reader;
 
 public interface CPRNGService {
-    public byte[] GetRandomBytes( int numberBytes);
-    public int GetRandomInt();
-    public Reader GetRandomReader();
+    byte[] GetRandomBytes(int numberBytes);
+
+    int GetRandomInt();
+
+    Reader GetRandomReader();
 }

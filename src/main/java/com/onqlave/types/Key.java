@@ -3,7 +3,7 @@ package com.onqlave.types;
 public interface Key {
     public int KeyID();
 
-    public KeyOperation Operation();
+    KeyOperation Operation();
 
-    public KeyData Data();
+    KeyData Data();
 }

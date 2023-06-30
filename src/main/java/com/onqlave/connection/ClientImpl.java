@@ -3,7 +3,11 @@ package com.onqlave.connection;
 import com.onqlave.contract.RetrySettings;
 import com.onqlave.contract.request.OnqlaveRequest;
 
+import java.net.URI;
 import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.Map;
 
 public class ClientImpl implements Client {
@@ -17,11 +21,26 @@ public class ClientImpl implements Client {
 
     @Override
     public byte[] Post(String resource, OnqlaveRequest body, Map<String, String> header) throws Exception {
-        return new byte[0];
+        String operation = "https";
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI(resource))
+                .POST(HttpRequest.BodyPublishers.ofByteArray(body.GetContent()))
+                .build();
+
+        //TODO: should add try/catch here. Or we need to be study how can we throwable in java
+        HttpResponse<byte[]> response = this.executeWithRetry(request);
+        return response.body();
     }
 
-    public HttpClient getClient() {
-        return client;
+    private HttpResponse executeWithRetry(HttpRequest request) throws Exception {
+        for (int i = 0; i < this.retrySettings.getMaxRetries(); i++) {
+            HttpResponse<byte[]> response = this.client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+            if (response.statusCode() == 200) {
+                return response;
+            }
+            //TODO: consider to sleep with this.retrySettings.maxWaitTime here
+        }
+        return null;
     }
 
     public void setClient(HttpClient client) {

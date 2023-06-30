@@ -1,25 +1,25 @@
 package com.onqlave.contract;
 
-import javax.xml.datatype.Duration;
+import java.time.Duration;
 
 
 public class RetrySettings {
-    private int count;
+    private int maxRetries;
     private Duration waitTime;
     private Duration maxWaitTime;
 
     public RetrySettings(int count, Duration waitTime, Duration maxWaitTime) {
-        this.count = count;
+        this.maxRetries = count;
         this.waitTime = waitTime;
         this.maxWaitTime = maxWaitTime;
     }
 
-    public int getCount() {
-        return count;
+    public int getMaxRetries() {
+        return maxRetries;
     }
 
-    public void setCount(int count) {
-        this.count = count;
+    public void setCount(int maxRetries) {
+        this.maxRetries = maxRetries;
     }
 
     public Duration getWaitTime() {

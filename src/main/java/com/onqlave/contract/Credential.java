@@ -15,23 +15,9 @@ public class Credential {
         return accessKey;
     }
 
-    public void setAccessKey(String accessKey) {
-        this.accessKey = accessKey;
-    }
-
-    public String getSigningKey() {
-        return signingKey;
-    }
-
-    public void setSigningKey(String signingKey) {
-        this.signingKey = signingKey;
-    }
+    public String getSigningKey() { return signingKey; }
 
     public String getSecretKey() {
         return secretKey;
-    }
-
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
     }
 }

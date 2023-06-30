@@ -16,30 +16,14 @@ public class RsaSsaPkcs1ShaOperation implements WrappingKeyOperation {
         this.factory = factory;
         this.format = format;
     }
-
-    public WrappingKeyFactory getFactory() {
-        return factory;
-    }
-
-    public void setFactory(WrappingKeyFactory factory) {
-        this.factory = factory;
-    }
-
-    public RsaSsaPkcs1ShaKeyFormat getFormat() {
-        return format;
-    }
-
-    public void setFormat(RsaSsaPkcs1ShaKeyFormat format) {
-        this.format = format;
-    }
     @Override
     public KeyFormat GetFormat() {
-        return null;
+        return this.format;
     }
 
     @Override
     public WrappingKeyFactory GetFactory() {
-        return null;
+        return this.factory;
     }
 
 }

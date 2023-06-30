@@ -1,6 +1,8 @@
 package com.onqlave.service;
 
-public class IDServiceImpl  implements IDService{
+import java.util.UUID;
+
+public class IDServiceImpl implements IDService {
     private CPRNGService randomService;
 
     public IDServiceImpl(CPRNGService randomService) {
@@ -17,11 +19,11 @@ public class IDServiceImpl  implements IDService{
 
     @Override
     public String NewStringID() {
-        return null;
+        return UUID.randomUUID().toString();
     }
 
     @Override
     public int NewKeyID() {
-        return 0;
+        return randomService.GetRandomInt32Bytes();
     }
 }

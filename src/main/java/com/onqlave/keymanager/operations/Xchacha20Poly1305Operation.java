@@ -13,30 +13,13 @@ public class Xchacha20Poly1305Operation implements KeyOperation {
         this.format = new Xchacha20KeyFormat(XCHACHA20_POLY1305_KEY_SIZE, XCHACHA20_POLY1305_VERSION);
     }
 
-    public KeyFactory getFactory() {
-        return factory;
-    }
-
-    public void setFactory(KeyFactory factory) {
-        this.factory = factory;
-    }
-
-    public Xchacha20KeyFormat getFormat() {
-        return format;
-    }
-
-    public void setFormat(Xchacha20KeyFormat format) {
-        this.format = format;
-    }
-
-
     @Override
     public KeyFormat GetFormat() {
-        return null;
+        return this.format;
     }
 
     @Override
     public KeyFactory GetFactory() {
-        return null;
+        return this.factory;
     }
 }

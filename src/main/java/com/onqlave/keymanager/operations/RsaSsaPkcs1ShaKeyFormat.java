@@ -4,12 +4,12 @@ import com.onqlave.types.HashType;
 import com.onqlave.types.KeyFormat;
 
 public class RsaSsaPkcs1ShaKeyFormat implements KeyFormat {
-    public int Version;
-    public HashType HashType;
+    public int version;
+    public HashType hashType;
 
     public RsaSsaPkcs1ShaKeyFormat(HashType hashType, int version) {
-        this.HashType = hashType;
-        this.Version = version;
+        this.hashType = hashType;
+        this.version = version;
     }
 
     @Override

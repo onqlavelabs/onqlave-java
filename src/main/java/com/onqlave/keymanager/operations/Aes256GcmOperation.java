@@ -15,30 +15,14 @@ public class Aes256GcmOperation implements KeyOperation {
         this.format = new AesGcmKeyFormat(AES256_GCM_KEY_SIZE, AES256_GCM_KEY_VERSION);
     }
 
-    public KeyFactory getFactory() {
-        return factory;
-    }
-
-    public void setFactory(KeyFactory factory) {
-        this.factory = factory;
-    }
-
-    public AesGcmKeyFormat getFormat() {
-        return format;
-    }
-
-    public void setFormat(AesGcmKeyFormat format) {
-        this.format = format;
-    }
-
     @Override
     public KeyFormat GetFormat() {
-        return null;
+        return this.format;
     }
 
     @Override
     public KeyFactory GetFactory() {
-        return null;
+        return this.factory;
     }
 
 }

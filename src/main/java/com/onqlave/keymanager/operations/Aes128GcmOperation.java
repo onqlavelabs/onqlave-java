@@ -19,27 +19,11 @@ public class Aes128GcmOperation implements KeyOperation {
 
     @Override
     public KeyFormat GetFormat() {
-        return null;
+        return this.format;
     }
 
     @Override
     public KeyFactory GetFactory() {
-        return null;
-    }
-
-    public KeyFactory getFactory() {
-        return factory;
-    }
-
-    public void setFactory(KeyFactory factory) {
-        this.factory = factory;
-    }
-
-    public AesGcmKeyFormat getFormat() {
-        return format;
-    }
-
-    public void setFormat(AesGcmKeyFormat format) {
-        this.format = format;
+        return this.factory;
     }
 }

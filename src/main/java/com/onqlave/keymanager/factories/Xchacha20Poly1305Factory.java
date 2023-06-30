@@ -44,7 +44,7 @@ public class Xchacha20Poly1305Factory implements KeyFactory {
         if (this.validateKey(key)) {
             return null;
         }
-        return new Xchacha20Poly1305Aead(this.randomService, key);
+        return new Xchacha20Poly1305Aead(this.randomService, key,true);
     }
 
     private boolean validateKey(Key key) throws Exception {

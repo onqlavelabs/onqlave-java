@@ -10,7 +10,7 @@ public class Xchacha20Poly1350Key implements Key {
     public Xchacha20Poly1350KeyData data;
     public int keyID;
 
-    public Xchacha20Poly1350Key(KeyOperation operation, Xchacha20Poly1350KeyData data, int keyID) {
+    public Xchacha20Poly1350Key(int keyID, KeyOperation operation, Xchacha20Poly1350KeyData data) {
         this.operation = operation;
         this.data = data;
         this.keyID = keyID;

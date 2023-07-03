@@ -5,5 +5,5 @@ import org.javatuples.Tuple;
 public interface KeyManager {
     Tuple FetchEncryptionKey() throws Exception;
 
-    Tuple FetchDecryptionKey() throws Exception;
+    byte[] FetchDecryptionKey(byte[] edk) throws Exception;
 }

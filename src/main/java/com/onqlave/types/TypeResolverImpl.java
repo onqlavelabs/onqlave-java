@@ -74,7 +74,7 @@ public class TypeResolverImpl implements TypeResolver {
         byte b = buffer.get();
         val = b == 1;
         break;
-      case 2: // Int8
+      case 2: // Byte
         val = buffer.get();
         break;
       case 3: // Int16
@@ -86,37 +86,25 @@ public class TypeResolverImpl implements TypeResolver {
       case 5: // Int64
         val = buffer.getLong();
         break;
-      case 6: // Uint8
-        val = buffer.get() & 0xFF;
-        break;
-      case 7: // Uint16
-        val = buffer.getShort() & 0xFFFF;
-        break;
-      case 8: // Uint32
-        val = buffer.getInt() & 0xFFFFFFFFL;
-        break;
-      case 9: // Uint64
-        val = buffer.getLong();
-        break;
-      case 10: // Float32
+      case 6: // Float
         int floatBits = buffer.getInt();
         val = Float.intBitsToFloat(floatBits);
         break;
-      case 11: // Float64
+      case 7: // Double
         long doubleBits = buffer.getLong();
         val = Double.longBitsToDouble(doubleBits);
         break;
-      case 12: // String
+      case 8: // Time
+        long unixTime = buffer.getLong();
+        val = new Date(unixTime * 1000);
+        break;
+      case 9: // Struct
         int strLength = buffer.getInt();
         byte[] strBytes = new byte[strLength];
         buffer.get(strBytes);
         val = new String(strBytes);
         break;
-      case 13: // Struct
-        long unixTime = buffer.getLong();
-        val = new Date(unixTime * 1000);
-        break;
-      case 14: // Slice
+      case 10: // Slice
         int sliceLength = buffer.getInt();
         byte[] sliceBytes = new byte[sliceLength];
         buffer.get(sliceBytes);

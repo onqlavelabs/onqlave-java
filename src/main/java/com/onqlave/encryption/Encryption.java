@@ -20,17 +20,12 @@ import org.bouncycastle.util.Arrays;
 import org.javatuples.Pair;
 import org.javatuples.Triplet;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.NoSuchAlgorithmException;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.nio.ByteBuffer;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
@@ -115,7 +110,7 @@ public class Encryption {
 
         byte[] cipherData = primitive.Encrypt(planData, associateData);
 
-        Writer cipherStream = new StringWriter();
+        OutputStream cipherStream = new ByteArrayOutputStream();
         PlainStreamProcessor processor = new PlainStreamProcessorImpl(cipherStream);
         processor.WriteHeader(header);
         processor.WritePacket(cipherData);
@@ -126,7 +121,7 @@ public class Encryption {
     public byte[] Decrypt(byte[] cipherData, byte[] associateData) throws  Exception {
         String operation = "Decrypt";
         Instant start = Instant.now();
-        Reader cipherStream = new StringReader(cipherData.toString());
+        InputStream cipherStream = new ByteArrayInputStream(cipherData);
         EncryptedStreamProcessor processor = new EncryptedStreamProcessorImpl(cipherStream);
         AlgorithmDeserialiser algo = processor.ReadHeader();
         AEAD primitive = this.initDecryptOperation(operation, algo);
@@ -136,7 +131,7 @@ public class Encryption {
         return plainData.toString().getBytes();
     }
 
-    public void EncryptStream(Reader plainStream, Writer cipherStream, byte[] associatedData)throws  Exception  {
+    public void EncryptStream(InputStream plainStream, OutputStream cipherStream, byte[] associatedData)throws  Exception  {
         String operation = "EncryptStream";
         Instant start = Instant.now();
 
@@ -146,7 +141,7 @@ public class Encryption {
         
         PlainStreamProcessor processor = new PlainStreamProcessorImpl(cipherStream);
         
-        char[] tempBuffer = new char[32*1024];
+        byte[] tempBuffer = new byte[32*1024];
         while (true) {
             try {
                 int datalen = plainStream.read(tempBuffer);
@@ -163,7 +158,7 @@ public class Encryption {
         return;
     }
 
-    public void DecryptStream(Writer plainStream, Reader cipherStream, byte[] associatedData) throws  Exception {
+    public void DecryptStream(OutputStream plainStream, InputStream cipherStream, byte[] associatedData) throws  Exception {
         String operation = "DecryptStream";
         Instant start = Instant.now();
 
@@ -175,7 +170,7 @@ public class Encryption {
             try {
                 byte[] cipher = processor.ReadPacket();
                 byte[] plainData = primitive.Decrypt(cipher, associatedData);
-                plainStream.write(plainData.toString());
+                plainStream.write(plainData);
             } catch (IOException e) {
                 break;
             } catch (Exception e) {
@@ -211,8 +206,7 @@ public class Encryption {
         String operation = "EncryptStructure";
         Instant start = Instant.now();
 
-        BufferedReader cipherStream = new BufferedReader(null);
-        // InputStream cipherStream = new ByteArrayInputStream(cipherStructure.getEdk());
+        InputStream cipherStream = new ByteArrayInputStream(cipherStructure.getEdk());
         EncryptedStreamProcessor processor = new EncryptedStreamProcessorImpl(cipherStream);
         AlgorithmDeserialiser algo = processor.ReadHeader();
         AEAD primitive = this.initDecryptOperation(operation, algo);

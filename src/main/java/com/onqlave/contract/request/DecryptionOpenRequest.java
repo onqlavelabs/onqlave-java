@@ -5,6 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class DecryptionOpenRequest implements OnqlaveRequest {
     private String EDK;
 
+    public DecryptionOpenRequest(String EDK) {
+        this.EDK = EDK;
+    }
+
     public String getEDK() {
         return EDK;
     }

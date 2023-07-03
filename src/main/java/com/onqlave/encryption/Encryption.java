@@ -20,6 +20,8 @@ import org.bouncycastle.util.Arrays;
 import org.javatuples.Pair;
 import org.javatuples.Triplet;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,6 +30,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.ByteBuffer;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
@@ -183,12 +186,46 @@ public class Encryption {
     }
 
     public OnqlaveStructure EncryptStructure(Map<String, Object> plainStructure, byte[] associatedData)throws  Exception  {
-        return null;
+        String operation = "EncryptStructure";
+        Instant start = Instant.now();
+
+        Pair<AlgorithmSeriliser, AEAD> tup = this.initEncryptOperation(operation);
+        AlgorithmSeriliser algo = tup.getValue0();
+        AEAD primitive = tup.getValue1();
+
+        byte[] header = algo.Serialise();
+        Map<String, byte[]> result = new HashMap<>();
+        TypeResolver resolver = new TypeResolverImpl();
+        for(Map.Entry<String, byte[]> e : result.entrySet()) {
+            byte[] plainData = resolver.Serialise(e.getKey(), e.getValue());
+
+            byte[] cipherData = primitive.Encrypt(plainData, associatedData);
+
+            result.put(e.getKey(), cipherData);
+        }
+
+        return new OnqlaveStructure(header, result);
     }
 
     public Map<String, Object> DecryptStructure(OnqlaveStructure cipherStructure , byte[] associatedData)throws  Exception  {
-        return null;
+        String operation = "EncryptStructure";
+        Instant start = Instant.now();
+
+        BufferedReader cipherStream = new BufferedReader(null);
+        // InputStream cipherStream = new ByteArrayInputStream(cipherStructure.getEdk());
+        EncryptedStreamProcessor processor = new EncryptedStreamProcessorImpl(cipherStream);
+        AlgorithmDeserialiser algo = processor.ReadHeader();
+        AEAD primitive = this.initDecryptOperation(operation, algo);
+        TypeResolver resolver = new TypeResolverImpl();
+        Map<String, Object> result = new HashMap<String, Object>();
+        for (Map.Entry<String, byte[]> e : cipherStructure.getEmbedded().entrySet()) {
+            byte[] plainData = primitive.Decrypt(e.getValue(), associatedData);
+
+            Object plainValue = resolver.Deserialise(e.getKey(), plainData);
+
+            result.put(e.getKey(), plainValue);
+        }
+
+        return result;
     }
-
-
 }

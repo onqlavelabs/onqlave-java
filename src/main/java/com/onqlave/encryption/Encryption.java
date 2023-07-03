@@ -42,7 +42,7 @@ public class Encryption {
         Configuration configuration = new Configuration(credential,retrySettings,ArxURL, debug);
         CPRNGService randomService ;
         try {
-             randomService = new CPRNGServiceImpl();
+            randomService = new CPRNGServiceImpl();
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
@@ -56,6 +56,8 @@ public class Encryption {
         operations.put(AlgorithmTypeValue.AES_GCM_256, new Aes256GcmOperation(aesGcmKeyFactory));
         operations.put(AlgorithmTypeValue.XCHA_CHA_20_POLY_1305, (KeyOperation) new Xchacha20Poly1305Operation(xchacha20Factory));
 
+        this.keyManager = keyManager;
+        this.operations = operations;
     }
 
     public void close() {
@@ -63,7 +65,6 @@ public class Encryption {
     }
 
     private Pair<AlgorithmSeriliser, AEAD> initEncryptOperation(String operation) throws  Exception {
-        Pair<AlgorithmSeriliser, AEAD> result = new Pair<AlgorithmSeriliser,AEAD>(null, null);
         try {
             Triplet<byte[], byte[], String> trip = this.keyManager.FetchEncryptionKey();
             
@@ -77,12 +78,13 @@ public class Encryption {
             AEAD primitive = factory.Primitive(key);
             AlgorithmSeriliser algorithm = new Algorithm(0, algo, edk);
 
+            Pair<AlgorithmSeriliser, AEAD> result = new Pair<AlgorithmSeriliser,AEAD>(null, null);
             result.setAt0(algorithm);
             result.setAt1(primitive);
+            return result;
         } catch (Exception e) {
-            // TODO: handle exception
+            throw e;
         }
-        return null;
     }
 
     private AEAD initDecryptOperation(String operation, AlgorithmDeserialiser algo)throws  Exception  {
@@ -95,9 +97,8 @@ public class Encryption {
             
             return primitive;
         } catch (Exception e) {
-            // TODO: handle exception
+            throw e;
         }
-        return null;
     }
 
     public byte[] Encrypt(byte[] planData, byte[] associateData)throws  Exception  {
@@ -140,6 +141,7 @@ public class Encryption {
         AEAD primitive = result.getValue1();
         
         PlainStreamProcessor processor = new PlainStreamProcessorImpl(cipherStream);
+        processor.WriteHeader(header);
         
         byte[] tempBuffer = new byte[32*1024];
         while (true) {

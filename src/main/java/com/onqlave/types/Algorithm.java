@@ -9,9 +9,9 @@ public class Algorithm implements AlgorithmSeriliser, AlgorithmDeserialiser {
     private byte algo;
     private byte[] key;
 
-    public Algorithm(byte version, byte algo, byte[] key) {
-        this.version = version;
-        this.algo = algo;
+    public Algorithm(int version, String algo, byte[] key) {
+        this.version = (byte) version;
+        this.algo = (byte) AlgorithmTypeValue.fromValue(algo);
         this.key = key;
     }
 
@@ -42,17 +42,6 @@ public class Algorithm implements AlgorithmSeriliser, AlgorithmDeserialiser {
         this.key = key;
     }
 
-
-    public  AlgorithmSeriliser NewAlgorithmSerialiser(byte version, String algo, byte[] key) {
-        byte algoValue = (byte) AlgorithmTypeValue.fromValue(algo);
-        return new Algorithm(version, algoValue, key);
-    }
-
-    public static AlgorithmDeserialiser NewAlgorithmDeserialiser() {
-        return new Algorithm();
-    }
-
-
     @Override
     public byte[] Key() {
         return key;
@@ -64,7 +53,7 @@ public class Algorithm implements AlgorithmSeriliser, AlgorithmDeserialiser {
     }
 
     @Override
-    public String Algorithm() {
+    public String GetAlgorithm() {
         return AlgorithmTypeName.fromValue(algo);
     }
 

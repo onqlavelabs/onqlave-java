@@ -7,6 +7,6 @@ public interface AlgorithmDeserialiser {
 
     byte Version();
 
-    String Algorithm();
+    String GetAlgorithm();
 }
 

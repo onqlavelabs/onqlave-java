@@ -54,7 +54,7 @@ public class KeyManagerImpl implements KeyManager {
 
 
     @Override
-    public Tuple FetchEncryptionKey() throws Exception {
+    public Triplet<byte[], byte[], String> FetchEncryptionKey() throws Exception {
         String operation = "FetchEncryptionKey";
         EncryptionOpenRequest request = new EncryptionOpenRequest();
         byte[] data;

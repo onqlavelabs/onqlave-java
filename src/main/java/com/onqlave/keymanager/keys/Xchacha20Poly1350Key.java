@@ -23,11 +23,11 @@ public class Xchacha20Poly1350Key implements Key {
 
     @Override
     public KeyOperation Operation() {
-        return null;
+        return this.operation;
     }
 
     @Override
     public KeyData Data() {
-        return null;
+        return this.data;
     }
 }

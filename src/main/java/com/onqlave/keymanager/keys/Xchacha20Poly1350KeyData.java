@@ -24,7 +24,7 @@ public class Xchacha20Poly1350KeyData implements KeyData {
 
     @Override
     public byte[] GetValue() throws Exception {
-        return new byte[0];
+        return this.value;
     }
 
     @Override
@@ -34,16 +34,16 @@ public class Xchacha20Poly1350KeyData implements KeyData {
 
     @Override
     public String GetTypeURL() {
-        return null;
+        return this.typeURL;
     }
 
     @Override
-    public int GetKeyMaterialType() {
-        return 0;
+    public KeyMaterialType GetKeyMaterialType() {
+        return this.keyMaterialType;
     }
 
     @Override
     public int GetVersion() {
-        return 0;
+        return this.version;
     }
 }

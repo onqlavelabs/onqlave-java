@@ -1,18 +1,19 @@
 package com.onqlave.contract.response;
 
 
-public class EncryptionOpenResponse extends BaseErrorResponse {
-    private WrappingKey WK;
-    private DataEncryptionKey DK;
-    private EncryptionSecurityModel SecurityModel;
-    private int MaxUses;
+import com.google.gson.annotations.SerializedName;
 
-    public EncryptionOpenResponse(WrappingKey WK, DataEncryptionKey DK, EncryptionSecurityModel SecurityModel, int MaxUses) {
-        this.WK = WK;
-        this.DK = DK;
-        this.SecurityModel = SecurityModel;
-        this.MaxUses = MaxUses;
-    }
+public class EncryptionOpenResponse extends BaseErrorResponse {
+    @SerializedName(value = "wrapping_key")
+    private WrappingKey WK;
+    @SerializedName(value = "data_key")
+    private DataEncryptionKey DK;
+    @SerializedName(value = "security_model")
+    private EncryptionSecurityModel securityModel;
+    @SerializedName(value = "max_uses")
+    private int maxUses;
+
+
 
     public WrappingKey getWK() {
         return WK;
@@ -26,24 +27,8 @@ public class EncryptionOpenResponse extends BaseErrorResponse {
         return DK;
     }
 
-    public void setDK(DataEncryptionKey DK) {
-        this.DK = DK;
-    }
-
     public EncryptionSecurityModel getSecurityModel() {
-        return SecurityModel;
-    }
-
-    public void setSecurityModel(EncryptionSecurityModel SecurityModel) {
-        this.SecurityModel = SecurityModel;
-    }
-
-    public int getMaxUses() {
-        return MaxUses;
-    }
-
-    public void setMaxUses(int MaxUses) {
-        this.MaxUses = MaxUses;
+        return this.securityModel;
     }
 }
 

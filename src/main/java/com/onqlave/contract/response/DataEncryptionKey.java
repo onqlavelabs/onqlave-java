@@ -1,28 +1,22 @@
 package com.onqlave.contract.response;
 
-public class DataEncryptionKey {
-    private byte[] EncryptedDataKey;
-    private byte[] WrappedDataKey;
+import com.google.gson.annotations.SerializedName;
 
-    public DataEncryptionKey(byte[] EncryptedDataKey, byte[] WrappedDataKey) {
-        this.EncryptedDataKey = EncryptedDataKey;
-        this.WrappedDataKey = WrappedDataKey;
-    }
+public class DataEncryptionKey {
+    @SerializedName(value = "encrypted_data_key")
+    private String encryptedDataKey;
+    @SerializedName(value = "wrapped_data_key")
+    private String wrappedDataKey;
+
 
     public byte[] getEncryptedDataKey() {
-        return EncryptedDataKey;
+        return this.encryptedDataKey.getBytes();
     }
 
-    public void setEncryptedDataKey(byte[] EncryptedDataKey) {
-        this.EncryptedDataKey = EncryptedDataKey;
-    }
 
     public byte[] getWrappedDataKey() {
-        return WrappedDataKey;
+        return this.wrappedDataKey.getBytes();
     }
 
-    public void setWrappedDataKey(byte[] WrappedDataKey) {
-        this.WrappedDataKey = WrappedDataKey;
-    }
 }
 

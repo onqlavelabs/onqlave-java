@@ -1,27 +1,19 @@
 package com.onqlave.contract.response;
 
-public class EncryptionSecurityModel {
-    private String Algorithm;
-    private String WrappingAlgorithm;
+import com.google.gson.annotations.SerializedName;
 
-    public EncryptionSecurityModel(String Algorithm, String WrappingAlgorithm) {
-        this.Algorithm = Algorithm;
-        this.WrappingAlgorithm = WrappingAlgorithm;
-    }
+public class EncryptionSecurityModel {
+    @SerializedName(value = "algo")
+    private String algorithm;
+    @SerializedName(value = "wrapping_algo")
+    private String wrappingAlgorithm;
+
 
     public String getAlgorithm() {
-        return Algorithm;
-    }
-
-    public void setAlgorithm(String Algorithm) {
-        this.Algorithm = Algorithm;
+        return this.algorithm;
     }
 
     public String getWrappingAlgorithm() {
-        return WrappingAlgorithm;
-    }
-
-    public void setWrappingAlgorithm(String WrappingAlgorithm) {
-        this.WrappingAlgorithm = WrappingAlgorithm;
+        return this.wrappingAlgorithm;
     }
 }

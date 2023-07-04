@@ -4,12 +4,15 @@ import com.onqlave.contract.Configuration;
 import com.onqlave.contract.request.OnqlaveRequest;
 import com.onqlave.utils.Constants;
 import com.onqlave.utils.Hasher;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ConnectionImpl implements Connection {
-
+    private static final Logger LOGGER = LogManager.getLogger(ConnectionImpl.class);
     private Hasher hasher;
     private Configuration configuration;
 
@@ -44,10 +47,16 @@ public class ConnectionImpl implements Connection {
 
         String signature = this.hasher.Sign(headers, this.configuration.getCredential().getSigningKey());
 
+        long unixTime = Instant.now().getEpochSecond();
         headers.put(Constants.OnqlaveContentType, "application/json");
-        headers.put(Constants.OnqlaveRequestTime, "");
+        headers.put(Constants.OnqlaveRequestTime, Long.toString(unixTime));
         headers.put(Constants.OnqlaveSignature, signature);
-        byte[] response = this.client.Post(url, body, headers);
-        return response;
+        try {
+            byte[] response = this.client.Post(url, body, headers);
+            return response;
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return null;
     }
 }

@@ -1,28 +1,19 @@
 package com.onqlave.contract.response;
 
-public class WrappingKey {
-    private byte[] EncryptedPrivateKey;
-    private byte[] KeyFingerprint;
+import com.google.gson.annotations.SerializedName;
 
-    public WrappingKey(byte[] EncryptedPrivateKey, byte[] KeyFingerprint) {
-        this.EncryptedPrivateKey = EncryptedPrivateKey;
-        this.KeyFingerprint = KeyFingerprint;
-    }
+public class WrappingKey {
+    @SerializedName(value = "encrypted_private_key")
+    private String encryptedPrivateKey;
+    @SerializedName(value = "key_fingerprint")
+    private String keyFingerprint;
 
     public byte[] getEncryptedPrivateKey() {
-        return EncryptedPrivateKey;
-    }
-
-    public void setEncryptedPrivateKey(byte[] EncryptedPrivateKey) {
-        this.EncryptedPrivateKey = EncryptedPrivateKey;
+        return this.encryptedPrivateKey.getBytes();
     }
 
     public byte[] getKeyFingerprint() {
-        return KeyFingerprint;
-    }
-
-    public void setKeyFingerprint(byte[] KeyFingerprint) {
-        this.KeyFingerprint = KeyFingerprint;
+        return this.keyFingerprint.getBytes();
     }
 }
 

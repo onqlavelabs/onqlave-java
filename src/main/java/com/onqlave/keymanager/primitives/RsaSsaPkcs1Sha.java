@@ -8,6 +8,7 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.OAEPParameterSpec;
 import javax.crypto.spec.PSource;
 import java.security.KeyFactory;
+import java.security.MessageDigest;
 import java.security.PrivateKey;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -18,10 +19,10 @@ import static com.onqlave.utils.Constants.KEY_ALGORITHM;
 public class RsaSsaPkcs1Sha implements Unwrapping {
 
     private CPRNGService randomService;
-    private HashFunction hashFunc;
+    private MessageDigest hashFunc;
     private int hashID;
 
-    public RsaSsaPkcs1Sha(CPRNGService randomService, HashFunction hashFunc, int hashID) {
+    public RsaSsaPkcs1Sha(CPRNGService randomService, MessageDigest hashFunc, int hashID) {
         this.randomService = randomService;
         this.hashFunc = hashFunc;
         this.hashID = hashID;

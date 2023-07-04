@@ -22,9 +22,9 @@ import com.onqlave.types.WrappingKeyOperation;
 import com.onqlave.utils.HashImpl;
 import com.onqlave.utils.Hasher;
 import org.javatuples.Triplet;
-import org.javatuples.Tuple;
 
 import java.net.http.HttpClient;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,23 +45,24 @@ public class KeyManagerImpl implements KeyManager {
         Connection httpClient = new ConnectionImpl(config, hasher, client);
         WrappingKeyFactory rsaSSAPKCS1KeyFactory = new RsaSsaPkcs1ShaFactory(randomService);
 
-        Map<String, WrappingKeyOperation> operations = new HashMap<String, WrappingKeyOperation>();
+        Map<String, WrappingKeyOperation> operations = new HashMap();
         operations.put(AlgorithmTypeValue.RSA_SSA_PKCS1_2048_SHA256_F4, new RsaSsaPkcs1ShaOperation(rsaSSAPKCS1KeyFactory));
         this.keyManager = httpClient;
         this.configuration = config;
         this.operation = operations;
     }
 
-
     @Override
     public Triplet<byte[], byte[], String> FetchEncryptionKey() throws Exception {
         String operation = "FetchEncryptionKey";
         EncryptionOpenRequest request = new EncryptionOpenRequest();
-        byte[] data;
         Triplet<byte[], byte[], String> trip;
+
         try {
-            data = this.keyManager.Post(ENCRYPT_RESOURCE_URL, request);
-            EncryptionOpenResponse response = new Gson().fromJson(data.toString(), EncryptionOpenResponse.class);
+            byte[] data = this.keyManager.Post(ENCRYPT_RESOURCE_URL, request);
+            System.out.println(new String(data, StandardCharsets.UTF_8));
+            EncryptionOpenResponse response = new Gson().fromJson(new String(data, StandardCharsets.UTF_8), EncryptionOpenResponse.class);
+
             byte[] edk = response.getDK().getEncryptedDataKey();
             byte[] wdk = response.getDK().getWrappedDataKey();
             byte[] epk = response.getWK().getEncryptedPrivateKey();

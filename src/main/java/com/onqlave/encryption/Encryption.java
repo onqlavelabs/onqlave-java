@@ -111,12 +111,12 @@ public class Encryption {
 
         byte[] cipherData = primitive.Encrypt(planData, associateData);
 
-        OutputStream cipherStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream cipherStream = new ByteArrayOutputStream();
         PlainStreamProcessor processor = new PlainStreamProcessorImpl(cipherStream);
         processor.WriteHeader(header);
         processor.WritePacket(cipherData);
 
-        return cipherStream.toString().getBytes();
+        return cipherStream.toByteArray();
     }
 
     public byte[] Decrypt(byte[] cipherData, byte[] associateData) throws  Exception {
@@ -129,7 +129,7 @@ public class Encryption {
         byte[] cipher = processor.ReadPacket();
         byte[] plainData = primitive.Decrypt(cipher, associateData);
 
-        return plainData.toString().getBytes();
+        return plainData;
     }
 
     public void EncryptStream(InputStream plainStream, OutputStream cipherStream, byte[] associatedData)throws  Exception  {

@@ -1,8 +1,18 @@
 package com.onqlave.contract.request;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
+
+class ObjectToByteConverter {
+    public static byte[] convertObjectToBytes(Object object) {
+        Gson gson = new Gson();
+        String json = gson.toJson(object);
+        return json.getBytes();
+    }
+}
 
 public class DecryptionOpenRequest implements OnqlaveRequest {
+    @SerializedName(value = "encrypted_data_key")
     private String EDK;
 
     public DecryptionOpenRequest(String EDK) {
@@ -19,8 +29,7 @@ public class DecryptionOpenRequest implements OnqlaveRequest {
 
     @Override
     public byte[] GetContent() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.writeValueAsBytes(this);
+       return ObjectToByteConverter.convertObjectToBytes(this);
     }
 }
 

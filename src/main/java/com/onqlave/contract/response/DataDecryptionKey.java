@@ -1,17 +1,13 @@
 package com.onqlave.contract.response;
 
-public class DataDecryptionKey {
-    private byte[] WrappedDataKey;
+import com.google.gson.annotations.SerializedName;
 
-    public DataDecryptionKey(byte[] WrappedDataKey) {
-        this.WrappedDataKey = WrappedDataKey;
-    }
+public class DataDecryptionKey {
+
+    @SerializedName(value = "wrapped_data_key")
+    private String b64WrappedDataKey;
 
     public byte[] getWrappedDataKey() {
-        return WrappedDataKey;
-    }
-
-    public void setWrappedDataKey(byte[] WrappedDataKey) {
-        this.WrappedDataKey = WrappedDataKey;
+        return b64WrappedDataKey.getBytes();
     }
 }

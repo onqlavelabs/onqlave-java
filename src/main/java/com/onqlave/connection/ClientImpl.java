@@ -22,14 +22,28 @@ public class ClientImpl implements Client {
     @Override
     public byte[] Post(String resource, OnqlaveRequest body, Map<String, String> header) throws Exception {
         String operation = "https";
-        HttpRequest request = HttpRequest.newBuilder()
+
+        HttpRequest.Builder builder = HttpRequest.newBuilder();
+
+
+        for (var entry : header.entrySet()) {
+            builder.setHeader(entry.getKey(), entry.getValue());
+        }
+
+        HttpRequest request = builder
                 .uri(new URI(resource))
                 .POST(HttpRequest.BodyPublishers.ofByteArray(body.GetContent()))
                 .build();
 
+
         //TODO: should add try/catch here. Or we need to be study how can we throwable in java
-        HttpResponse<byte[]> response = this.executeWithRetry(request);
-        return response.body();
+        try {
+            HttpResponse<byte[]> response = this.executeWithRetry(request);
+            return response.body();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return null;
     }
 
     private HttpResponse executeWithRetry(HttpRequest request) throws Exception {

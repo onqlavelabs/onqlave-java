@@ -1,7 +1,7 @@
 package com.onqlave.types;
 
 public interface KeyData {
-    byte[] GetValue() throws Exception;
+    byte[] GetValue();
     void FromValue(byte[] data) throws  Exception;
     String GetTypeURL();
     KeyMaterialType GetKeyMaterialType();

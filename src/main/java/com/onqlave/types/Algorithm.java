@@ -1,5 +1,6 @@
 package com.onqlave.types;
 
+import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
@@ -18,6 +19,7 @@ public class Algorithm implements AlgorithmSeriliser, AlgorithmDeserialiser {
     public Algorithm() {
 
     }
+
     public byte getVersion() {
         return version;
     }
@@ -57,34 +59,39 @@ public class Algorithm implements AlgorithmSeriliser, AlgorithmDeserialiser {
         return AlgorithmTypeName.fromValue(algo);
     }
 
+    //TODO: consider to review
     @Override
     public byte[] Serialise() throws Exception {
-        ByteBuffer buffer = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN);
-        buffer.putInt(7 + key.length);
-        buffer.put(version);
-        buffer.put(algo);
-        buffer.put((byte) key.length);
-        buffer.put(key);
-        buffer.flip();
-        byte[] serialised = new byte[buffer.remaining()];
-        buffer.get(serialised);
-        return serialised;
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ByteBuffer headerLenBuffer = ByteBuffer.allocate(4);
+        headerLenBuffer.order(ByteOrder.BIG_ENDIAN);
+        headerLenBuffer.putInt(7 + key.length);
+        outputStream.write(headerLenBuffer.array());
+        outputStream.write(version);
+        outputStream.write(algo);
+        outputStream.write(key.length);
+        outputStream.writeBytes(key);
+        return outputStream.toByteArray();
     }
 
     @Override
     public int Deserialise(byte[] buffer) throws Exception {
         if (buffer.length < 7) {
-            throw new Exception("[Deserialise] Invalid Cipher Data");
+            throw new IllegalArgumentException("Invalid cipher data");
         }
+
         int headerLen = ByteBuffer.wrap(buffer, 0, 4).order(ByteOrder.BIG_ENDIAN).getInt();
         if (buffer.length < headerLen) {
-            throw new Exception("[Deserialise] Invalid Cipher Data");
+            throw new IllegalArgumentException("Invalid cipher data");
         }
+
         version = buffer[4];
         algo = buffer[5];
-        byte keyLen = buffer[6];
-        key = Arrays.copyOfRange(buffer, 7, 7 + keyLen);
-        return headerLen;
+        int keyLen = buffer[6] & 0xFF;
+
+        key = new byte[keyLen];
+        System.arraycopy(buffer, 7, key, 0, keyLen);
+        return keyLen;
     }
 }
 

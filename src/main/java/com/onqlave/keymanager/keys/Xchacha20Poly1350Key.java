@@ -7,6 +7,7 @@ import com.onqlave.types.KeyOperation;
 
 public class Xchacha20Poly1350Key implements Key {
     public KeyOperation operation;
+
     public Xchacha20Poly1350KeyData data;
     public int keyID;
 

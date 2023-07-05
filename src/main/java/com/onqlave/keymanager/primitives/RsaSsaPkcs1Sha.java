@@ -2,26 +2,29 @@ package com.onqlave.keymanager.primitives;
 
 import com.onqlave.service.CPRNGService;
 import com.onqlave.types.Unwrapping;
-import com.onqlave.utils.Hasher;
 
 import javax.crypto.Cipher;
-import javax.crypto.spec.OAEPParameterSpec;
-import javax.crypto.spec.PSource;
-import java.security.KeyFactory;
-import java.security.PrivateKey;
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
+import java.security.*;
 import java.security.interfaces.RSAPrivateCrtKey;
-import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.Base64;
 
-import static com.onqlave.utils.Constants.CIPHER_ALGORITHM;
-import static com.onqlave.utils.Constants.KEY_ALGORITHM;
+
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.openssl.*;
+import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
+import org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilder;
+import org.bouncycastle.operator.InputDecryptorProvider;
+import org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo;
 
 public class RsaSsaPkcs1Sha implements Unwrapping {
 
     private CPRNGService randomService;
-    private HashFunction hashFunc;
+    private MessageDigest hashFunc;
     private int hashID;
 
-    public RsaSsaPkcs1Sha(CPRNGService randomService, HashFunction hashFunc, int hashID) {
+    public RsaSsaPkcs1Sha(CPRNGService randomService, MessageDigest hashFunc, int hashID) {
         this.randomService = randomService;
         this.hashFunc = hashFunc;
         this.hashID = hashID;
@@ -29,20 +32,39 @@ public class RsaSsaPkcs1Sha implements Unwrapping {
 
     @Override
     public byte[] UnwrapKey(byte[] wdk, byte[] epk, byte[] fp, byte[] password) throws Exception {
-        PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(epk);
-        KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
-        PrivateKey privateKey = keyFactory.generatePrivate(privateKeySpec);
-        RSAPrivateCrtKey rsaPrivateKey = (RSAPrivateCrtKey) privateKey;
-        return decryptOAEP(rsaPrivateKey, wdk);
-
-
+        PrivateKey privateKey = this.parseEncryptedPKCS8(epk, new String(password));
+        RSAPrivateCrtKey k = (RSAPrivateCrtKey) privateKey;
+        return decryptOAEP(k, wdk);
     }
 
     private byte[] decryptOAEP(RSAPrivateCrtKey privateKey, byte[] ciphertext) throws Exception {
-        javax.crypto.Cipher cipher = javax.crypto.Cipher.getInstance(CIPHER_ALGORITHM, "BC");
-        cipher.init(javax.crypto.Cipher.DECRYPT_MODE, privateKey);
+        byte[] decodedBytes = Base64.getDecoder().decode(ciphertext);
+        Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING", "BC");
+        cipher.init(Cipher.DECRYPT_MODE, privateKey);
+        return cipher.doFinal(decodedBytes);
+    }
 
-        return cipher.doFinal(ciphertext);
+    public static PrivateKey parseEncryptedPKCS8(byte[] keyData, String password) throws Exception {
+        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+        byte[] decodedBytes = Base64.getDecoder().decode(keyData);
+        PEMParser pemParser = new PEMParser(new InputStreamReader(new ByteArrayInputStream(decodedBytes)));
+        Object object = pemParser.readObject();
+
+        if (object instanceof PKCS8EncryptedPrivateKeyInfo) {
+            PKCS8EncryptedPrivateKeyInfo encryptedPrivateKeyInfo = (PKCS8EncryptedPrivateKeyInfo) object;
+
+            InputDecryptorProvider decryptionProv = new JceOpenSSLPKCS8DecryptorProviderBuilder().build(password.toCharArray());
+            PrivateKeyInfo keyInfo = encryptedPrivateKeyInfo.decryptPrivateKeyInfo(decryptionProv);
+            JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider("BC");
+            PrivateKey key = converter.getPrivateKey(keyInfo);
+            return key;
+        } else if (object instanceof PEMKeyPair) {
+            PEMKeyPair pemKeyPair = (PEMKeyPair) object;
+            JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider("BC");
+            return converter.getPrivateKey(pemKeyPair.getPrivateKeyInfo());
+        } else {
+            throw new Exception("Invalid encrypted private key format.");
+        }
     }
 }
 

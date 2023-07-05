@@ -1,5 +1,6 @@
 package com.onqlave.types;
 
+import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
@@ -57,18 +58,24 @@ public class Algorithm implements AlgorithmSeriliser, AlgorithmDeserialiser {
         return AlgorithmTypeName.fromValue(algo);
     }
 
+    //TODO: consider to review
     @Override
     public byte[] Serialise() throws Exception {
-        ByteBuffer buffer = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN);
-        buffer.putInt(7 + key.length);
-        buffer.put(version);
-        buffer.put(algo);
-        buffer.put((byte) key.length);
-        buffer.put(key);
-        buffer.flip();
-        byte[] serialised = new byte[buffer.remaining()];
-        buffer.get(serialised);
-        return serialised;
+        ByteArrayOutputStream buf = new ByteArrayOutputStream();
+
+        ByteBuffer headerLenBuf = ByteBuffer.allocate(4);
+        headerLenBuf.order(ByteOrder.BIG_ENDIAN);
+        int headerLen = 7 + this.key.length;
+        headerLenBuf.putInt(headerLen);
+        byte[] headerLenBytes = headerLenBuf.array();
+        buf.write(headerLenBytes);
+
+        buf.write(this.version);
+        buf.write(this.algo);
+        buf.write((byte) this.key.length);
+        buf.write(this.key);
+
+        return buf.toByteArray();
     }
 
     @Override

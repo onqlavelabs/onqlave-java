@@ -27,8 +27,7 @@ public class Constants {
     public static final String KEY_ALGORITHM = "RSA";
     public static final String CIPHER_ALGORITHM = "RSA/ECB/OAEPWithSHA-256AndMGF1Padding";
 
-
-    public static final int XChaCha20Poly1305NonceSize = 24;
+    public static final int XChaCha20Poly1305NonceSize = 12;
     public static final int XChaCha20Poly1305TagSize = 16;
     public static final int MIN_PREPEND_IV_CIPHERTEXT_SIZE_XCHACHA = XChaCha20Poly1305NonceSize + XChaCha20Poly1305TagSize;
     public static final int MIN_NO_IV_CIPHERTEXT_SIZE_XCHACHA = XChaCha20Poly1305TagSize;

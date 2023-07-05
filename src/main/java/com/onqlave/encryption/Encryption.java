@@ -78,9 +78,9 @@ public class Encryption {
             AEAD primitive = factory.Primitive(key);
             AlgorithmSeriliser algorithm = new Algorithm(0, algo, edk);
 
-            Pair<AlgorithmSeriliser, AEAD> result = new Pair<AlgorithmSeriliser,AEAD>(null, null);
-            result.setAt0(algorithm);
-            result.setAt1(primitive);
+            Pair<AlgorithmSeriliser, AEAD> result = new Pair<AlgorithmSeriliser,AEAD>(algorithm, primitive);
+//            result.setAt0(algorithm);
+//            result.setAt1(primitive);
             return result;
         } catch (Exception e) {
             throw e;

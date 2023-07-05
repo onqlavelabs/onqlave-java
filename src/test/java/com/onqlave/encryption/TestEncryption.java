@@ -46,11 +46,19 @@ public class TestEncryption {
         Encryption enc = new Encryption(credential, retry, "https://dp0.onqlave.io/cluster--0YXcpkP0vTNFuzwQXYnST", true);
 
         String plainText = "This is a plain text string";
+        byte[] encrypted = new byte[0];
         try {
 
-            enc.Encrypt(plainText.getBytes(), null);
+            encrypted = enc.Encrypt(plainText.getBytes(), null);
         } catch (Exception e) {
             System.out.println(e);
+        }
+
+
+        try {
+            enc.Decrypt(encrypted, null);
+        } catch (Exception e) {
+
         }
     }
 

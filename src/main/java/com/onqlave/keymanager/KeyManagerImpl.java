@@ -63,6 +63,7 @@ public class KeyManagerImpl implements KeyManager {
             System.out.println(new String(data, StandardCharsets.UTF_8));
             EncryptionOpenResponse response = new Gson().fromJson(new String(data, StandardCharsets.UTF_8), EncryptionOpenResponse.class);
 
+            //TODO: consider to convert to base64 before use
             byte[] edk = response.getDK().getEncryptedDataKey();
             byte[] wdk = response.getDK().getWrappedDataKey();
             byte[] epk = response.getWK().getEncryptedPrivateKey();

@@ -28,7 +28,7 @@ public class AesGcmAead implements AEAD {
 
         //TODO: consider to add try/catch block here if you want to handle exception
         byte[] keyValue = keyData.GetValue();
-        if (validateKeySize(keyValue.length)) {
+        if (!validateKeySize(keyValue.length)) {
             throw new Exception("invalid AES key size");
         }
 

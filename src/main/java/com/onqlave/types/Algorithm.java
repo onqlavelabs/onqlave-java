@@ -70,7 +70,7 @@ public class Algorithm implements AlgorithmSeriliser, AlgorithmDeserialiser {
         outputStream.write(version);
         outputStream.write(algo);
         outputStream.write(key.length);
-        outputStream.write(key);
+        outputStream.writeBytes(key);
         return outputStream.toByteArray();
     }
 

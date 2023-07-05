@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -76,7 +77,9 @@ public class Encryption {
             KeyFactory factory = ops.GetFactory();
             Key key = factory.NewKeyFromData(ops, dk);
             AEAD primitive = factory.Primitive(key);
-            AlgorithmSeriliser algorithm = new Algorithm(0, algo, edk);
+
+            byte[] decodedBytes = Base64.getDecoder().decode(edk);
+            AlgorithmSeriliser algorithm = new Algorithm(0, algo, decodedBytes);
 
             Pair<AlgorithmSeriliser, AEAD> result = new Pair<AlgorithmSeriliser,AEAD>(algorithm, primitive);
             return result;
@@ -114,8 +117,8 @@ public class Encryption {
         processor.WriteHeader(header);
         processor.WritePacket(cipherData);
 
-        ByteArrayOutputStream cipherStream1 = (ByteArrayOutputStream)cipherStream;
-        return cipherStream1.toByteArray();
+        ByteArrayOutputStream byteCipherStream = (ByteArrayOutputStream)cipherStream;
+        return byteCipherStream.toByteArray();
     }
 
     public byte[] Decrypt(byte[] cipherData, byte[] associateData) throws  Exception {

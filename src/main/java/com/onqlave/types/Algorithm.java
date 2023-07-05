@@ -59,8 +59,13 @@ public class Algorithm implements AlgorithmSeriliser, AlgorithmDeserialiser {
 
     @Override
     public byte[] Serialise() throws Exception {
-        ByteBuffer buffer = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN);
-        buffer.putInt(7 + key.length);
+        int len = 7 + key.length;
+        ByteBuffer tempBuffer = ByteBuffer.allocate(4);
+        tempBuffer.putInt(len);
+        byte[] headerLen = tempBuffer.array();
+
+        ByteBuffer buffer = ByteBuffer.allocate(len);
+        buffer.put(headerLen);
         buffer.put(version);
         buffer.put(algo);
         buffer.put((byte) key.length);

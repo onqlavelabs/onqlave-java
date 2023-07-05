@@ -78,8 +78,7 @@ public class Encryption {
             Key key = factory.NewKeyFromData(ops, dk);
             AEAD primitive = factory.Primitive(key);
 
-            byte[] decodedBytes = Base64.getDecoder().decode(edk);
-            AlgorithmSeriliser algorithm = new Algorithm(0, algo, decodedBytes);
+            AlgorithmSeriliser algorithm = new Algorithm(0, algo, edk);
 
             Pair<AlgorithmSeriliser, AEAD> result = new Pair<AlgorithmSeriliser,AEAD>(algorithm, primitive);
             return result;

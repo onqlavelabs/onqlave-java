@@ -49,7 +49,6 @@ public class ClientImpl implements Client {
     private HttpResponse executeWithRetry(HttpRequest request) throws Exception {
         for (int i = 0; i < this.retrySettings.getMaxRetries(); i++) {
             HttpResponse<byte[]> response = this.client.send(request, HttpResponse.BodyHandlers.ofByteArray());
-            System.out.println(new String(response.body()));
             if (response.statusCode() == 200) {
                 return response;
             }

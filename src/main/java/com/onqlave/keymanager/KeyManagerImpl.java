@@ -82,11 +82,11 @@ public class KeyManagerImpl implements KeyManager {
     @Override
     public byte[] FetchDecryptionKey(byte[]edk) throws Exception {
         String operation = "FetchDecryptionKey";
-        DecryptionOpenRequest request = new DecryptionOpenRequest(edk.toString());
+        DecryptionOpenRequest request = new DecryptionOpenRequest(new String(edk));
         byte[] dk;
         try {
             byte[] data = this.keyManager.Post(DECRYPT_RESOURCE_URL, request);
-            DecryptionOpenResponse response = new Gson().fromJson(data.toString(), DecryptionOpenResponse.class);
+            DecryptionOpenResponse response = new Gson().fromJson(new String(data), DecryptionOpenResponse.class);
             byte[] wdk = response.getDK().getWrappedDataKey();
             byte[] epk = response.getWK().getEncryptedPrivateKey();
             byte[] fp = response.getWK().getKeyFingerprint();

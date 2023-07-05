@@ -17,7 +17,6 @@ import java.time.Duration;
 //        }
 
 
-
 //{
 //        "access_key": "onq.w7wVODbp7PZm3yygIFQ32GTi5A7mmQxm",
 //        "arx_url": "http://localhost:8090/cluster--6dtMjth2bTlFhemsZ-mHv",
@@ -34,31 +33,43 @@ import java.time.Duration;
 //        "server_secret_key": "onq.qACMyOPUjADyHhXkn03FR8r7FOVThORISdqahBWSxSxm7Gta0NNnZukJHKsTI2qmHKcIuQ2hkSJuH1FpJlGTuhQdzCvq79lJ5uEFK5zxePcGcSQABvNy1MVCX4VNqP9J",
 //        "client_key": ""
 //        }
+
+
+//TODO: AES-128
+//{
+//        "access_key": "onq.Q9sWg4jaH3R2VEqDYgvpEERuRMVRrQTH",
+//        "arx_url": "https://dp0.onqlave.com/cluster--n4urZ76lCDRk2_f2w0jmq",
+//        "server_signing_key": "onq.vbFmb3OzVQcF30jfm8HcpwGdrcl0C7mW",
+//        "server_secret_key": "onq.Iia6CEUobDf5KN07b3K1Sg50VAtoSoFW2gtmVOAibK7XgXZozzS7pRXdWr9fbF4LXrK0RfXwSDME279pa0nCuvBekWkyD8FnOQFyXwaTm8qUk4UtrKWrZsYcoTqQveIW",
+//        "client_key": ""
+//        }
 public class TestEncryption {
 
     @Test
     public void TestEncryption() throws Exception {
-        Credential credential = new Credential("onq.PUaOUCJ2NfuM7CuIvBw0RIqWek4mRC89",
-                "onq.XacZ7FyCkgQN5qsOuFe33rGVWvz6igZc",
-                "onq.qACMyOPUjADyHhXkn03FR8r7FOVThORISdqahBWSxSxm7Gta0NNnZukJHKsTI2qmHKcIuQ2hkSJuH1FpJlGTuhQdzCvq79lJ5uEFK5zxePcGcSQABvNy1MVCX4VNqP9J");
+        Credential credential = new Credential("onq.Q9sWg4jaH3R2VEqDYgvpEERuRMVRrQTH",
+                "onq.vbFmb3OzVQcF30jfm8HcpwGdrcl0C7mW",
+                "onq.Iia6CEUobDf5KN07b3K1Sg50VAtoSoFW2gtmVOAibK7XgXZozzS7pRXdWr9fbF4LXrK0RfXwSDME279pa0nCuvBekWkyD8FnOQFyXwaTm8qUk4UtrKWrZsYcoTqQveIW");
 
         RetrySettings retry = new RetrySettings(1, Duration.ofSeconds(30), Duration.ofSeconds(30));
-        Encryption enc = new Encryption(credential, retry, "https://dp0.onqlave.io/cluster--0YXcpkP0vTNFuzwQXYnST", true);
+        Encryption enc = new Encryption(credential, retry, "https://dp0.onqlave.com/cluster--n4urZ76lCDRk2_f2w0jmq", true);
 
         String plainText = "This is a plain text string";
         byte[] encrypted = new byte[0];
         try {
 
-            encrypted = enc.Encrypt(plainText.getBytes(), null);
+            encrypted = enc.Encrypt(plainText.getBytes(), new byte[0]);
         } catch (Exception e) {
             System.out.println(e);
+            throw e;
         }
 
 
         try {
-            enc.Decrypt(encrypted, null);
+            byte[] got = enc.Decrypt(encrypted, new byte[0]);
         } catch (Exception e) {
-
+            System.out.println(e);
+            throw e;
         }
     }
 

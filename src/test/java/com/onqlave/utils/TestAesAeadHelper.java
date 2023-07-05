@@ -10,9 +10,9 @@ public class TestAesAeadHelper {
         CPRNGServiceImpl random = new CPRNGServiceImpl();
         byte[] key = random.GetRandomBytes(32);
         byte[] iv = random.GetRandomBytes(12);
-        byte []ciphertext = AESAEADHelper.Encrypt(plainText.getBytes(), new byte[0], key, iv, true);
+        byte []ciphertext = AESAEADHelper.Encrypt(plainText.getBytes(), new byte[0], key, iv);
 
-        byte []plaintext = AESAEADHelper.Decrypt(ciphertext, new byte[0], key, true);
+        byte []plaintext = AESAEADHelper.Decrypt(ciphertext, new byte[0], key, iv);
 
         System.out.println(new String(plaintext));
     }

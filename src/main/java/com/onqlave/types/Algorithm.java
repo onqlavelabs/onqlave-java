@@ -68,7 +68,7 @@ public class Algorithm implements AlgorithmSeriliser, AlgorithmDeserialiser {
         int headerLen = 7 + this.key.length;
         headerLenBuf.putInt(headerLen);
         byte[] headerLenBytes = headerLenBuf.array();
-        buf.write(headerLenBytes);
+        buf.writeBytes(headerLenBytes);
 
         buf.write(this.version);
         buf.write(this.algo);

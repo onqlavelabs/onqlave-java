@@ -23,7 +23,7 @@ public class AesGcmKeyData implements KeyData {
     }
 
     @Override
-    public byte[] GetValue() throws Exception {
+    public byte[] GetValue() {
         return this.value;
     }
 

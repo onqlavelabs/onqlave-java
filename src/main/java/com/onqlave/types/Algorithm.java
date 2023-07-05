@@ -19,6 +19,7 @@ public class Algorithm implements AlgorithmSeriliser, AlgorithmDeserialiser {
     public Algorithm() {
 
     }
+
     public byte getVersion() {
         return version;
     }
@@ -61,37 +62,36 @@ public class Algorithm implements AlgorithmSeriliser, AlgorithmDeserialiser {
     //TODO: consider to review
     @Override
     public byte[] Serialise() throws Exception {
-        ByteArrayOutputStream buf = new ByteArrayOutputStream();
-
-        ByteBuffer headerLenBuf = ByteBuffer.allocate(4);
-        headerLenBuf.order(ByteOrder.BIG_ENDIAN);
-        int headerLen = 7 + this.key.length;
-        headerLenBuf.putInt(headerLen);
-        byte[] headerLenBytes = headerLenBuf.array();
-        buf.writeBytes(headerLenBytes);
-
-        buf.write(this.version);
-        buf.write(this.algo);
-        buf.write((byte) this.key.length);
-        buf.write(this.key);
-
-        return buf.toByteArray();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ByteBuffer headerLenBuffer = ByteBuffer.allocate(4);
+        headerLenBuffer.order(ByteOrder.BIG_ENDIAN);
+        headerLenBuffer.putInt(7 + key.length);
+        outputStream.write(headerLenBuffer.array());
+        outputStream.write(version);
+        outputStream.write(algo);
+        outputStream.write(key.length);
+        outputStream.write(key);
+        return outputStream.toByteArray();
     }
 
     @Override
     public int Deserialise(byte[] buffer) throws Exception {
         if (buffer.length < 7) {
-            throw new Exception("[Deserialise] Invalid Cipher Data");
+            throw new IllegalArgumentException("Invalid cipher data");
         }
+
         int headerLen = ByteBuffer.wrap(buffer, 0, 4).order(ByteOrder.BIG_ENDIAN).getInt();
         if (buffer.length < headerLen) {
-            throw new Exception("[Deserialise] Invalid Cipher Data");
+            throw new IllegalArgumentException("Invalid cipher data");
         }
+
         version = buffer[4];
         algo = buffer[5];
-        byte keyLen = buffer[6];
-        key = Arrays.copyOfRange(buffer, 7, 7 + keyLen);
-        return headerLen;
+        int keyLen = buffer[6] & 0xFF;
+
+        key = new byte[keyLen];
+        System.arraycopy(buffer, 7, key, 0, keyLen);
+        return keyLen;
     }
 }
 

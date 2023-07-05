@@ -114,7 +114,8 @@ public class Encryption {
         processor.WriteHeader(header);
         processor.WritePacket(cipherData);
 
-        return cipherStream.toString().getBytes();
+        ByteArrayOutputStream cipherStream1 = (ByteArrayOutputStream)cipherStream;
+        return cipherStream1.toByteArray();
     }
 
     public byte[] Decrypt(byte[] cipherData, byte[] associateData) throws  Exception {

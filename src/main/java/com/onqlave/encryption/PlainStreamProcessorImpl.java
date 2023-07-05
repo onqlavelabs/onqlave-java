@@ -15,7 +15,7 @@ public class PlainStreamProcessorImpl implements PlainStreamProcessor {
         this.cipherStream = cipherStream;
     }
 
-    private  OutputStream cipherStream;
+    private OutputStream cipherStream;
 
     public PlainStreamProcessorImpl(OutputStream cipherStream) {
         this.cipherStream = cipherStream;

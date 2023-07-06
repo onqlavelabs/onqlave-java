@@ -10,6 +10,7 @@ import com.onqlave.keymanager.primitives.*;
 public class AesGcmFactory implements KeyFactory {
     public IDService idService;
     public CPRNGService randomService;
+
     public AesGcmFactory(IDService idService, CPRNGService randomService) {
         this.idService = idService;
         this.randomService = randomService;
@@ -31,7 +32,7 @@ public class AesGcmFactory implements KeyFactory {
     @Override
     public Key NewKeyFromData(KeyOperation operation, byte[] keyData) throws Exception {
         KeyFormat format = operation.GetFormat();
-        if (this.validateKeyFormat(format)) {
+        if (!this.validateKeyFormat(format)) {
             throw new Exception("aesGcmKeyFactory: invalid key format.");
         }
 
@@ -41,44 +42,35 @@ public class AesGcmFactory implements KeyFactory {
 
     @Override
     public AEAD Primitive(Key key) throws Exception {
-        if (this.validateKey(key)) {
+        if (!this.validateKey(key)) {
             throw new Exception("aesGcmKeyFactory: invalid key.");
         }
         return new AesGcmAead(key, this.randomService);
     }
 
-    private boolean validateKey(Key key) throws Exception {
-        try {
-            KeyData keyData = key.Data();
-            if (this.validateKeyVersion(keyData.GetVersion(), Aes128GcmOperation.AES128_GCM_KEY_VERSION)) {
-                return false;
-            }
+    private boolean validateKey(Key key) {
+        KeyData keyData = key.Data();
+        if (!this.validateKeyVersion(keyData.GetVersion(), Aes128GcmOperation.AES128_GCM_KEY_VERSION)) {
+            return false;
+        }
 
-            if (AesGcmAead.validateKeySize(keyData.GetValue().length)) {
-                return false;
-            }
-        } catch (Exception e) {
-            throw new Exception("aesGcmKeyFactory: invalid key version: %s");
+        if (!AesGcmAead.validateKeySize(keyData.GetValue().length)) {
+            return false;
         }
 
         return true;
     }
 
-    private boolean validateKeyFormat(KeyFormat format) throws Exception {
-        try {
-            if (AesGcmAead.validateKeySize(format.Size())) {
-                return true;
-            }
-        } catch (Exception e) {
-            throw new Exception("aesGcmKeyFactory: invalid key format");
+    private boolean validateKeyFormat(KeyFormat format) {
+        if (!AesGcmAead.validateKeySize(format.Size())) {
+            return false;
         }
-
-        return false;
+        return true;
     }
 
-    private boolean validateKeyVersion(int version, int maxExpected) throws Exception {
+    private boolean validateKeyVersion(int version, int maxExpected) {
         if (version > maxExpected) {
-            throw new Exception(String.format("key has version %d; only keys with version in range [0..%d] are supported", version, maxExpected));
+            return false;
         }
         return true;
     }

@@ -20,9 +20,9 @@ public class HashImpl implements Hasher {
     @Override
     public String Digest(OnqlaveRequest body) throws Exception {
         byte[] content = body.GetContent();
-        if (content.length < 1) {
-            throw new Exception("Request body content is null");
-        }
+//        if (content.length < 1) {
+//            throw new Exception("Request body content is null");
+//        }
         byte[] digestBytes = MessageDigest.getInstance(DIGEST_ALGORITHM).digest(content);
         if (digestBytes.length < 1) {
             throw new Exception("Digest bytes is empty");
@@ -40,12 +40,14 @@ public class HashImpl implements Hasher {
 
         Map<String, String> sortedHeaders = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         sortedHeaders.putAll(headers);
+        System.out.println(sortedHeaders);
+
         StringBuilder signatureBuilder = new StringBuilder();
         for (Map.Entry<String, String> header : sortedHeaders.entrySet()) {
             String headerName = header.getKey().toLowerCase();
             String headerValue = header.getValue();
             if (headerValue != null && !headerValue.isEmpty()) {
-                signatureBuilder.append(headerName).append(":").append(headerValue).append("\n");
+                signatureBuilder.append(headerName).append(":").append(headerValue);
             }
         }
 

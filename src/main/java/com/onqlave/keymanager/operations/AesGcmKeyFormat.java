@@ -3,8 +3,8 @@ package com.onqlave.keymanager.operations;
 import com.onqlave.types.KeyFormat;
 
 public class AesGcmKeyFormat implements KeyFormat {
-    public int keySize;
-    public int version;
+    private int keySize;
+    private int version;
 
     public AesGcmKeyFormat(int keySize, int version) {
         this.keySize = keySize;

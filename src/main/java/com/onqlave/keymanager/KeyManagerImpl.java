@@ -22,19 +22,19 @@ import com.onqlave.types.WrappingKeyOperation;
 import com.onqlave.utils.HashImpl;
 import com.onqlave.utils.Hasher;
 import org.javatuples.Triplet;
-import org.javatuples.Tuple;
 
 import java.net.http.HttpClient;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.onqlave.error.ErrorCodes.SdkErrorCode;
 
 public class KeyManagerImpl implements KeyManager {
-    public Connection keyManager;
-    public Configuration configuration;
+    private Connection keyManager;
+    private Configuration configuration;
 
-    public Map<String, WrappingKeyOperation> operation;
+    private Map<String, WrappingKeyOperation> operation;
 
     private static final String ENCRYPT_RESOURCE_URL = "oe2/keymanager/encrypt";
     private static final String DECRYPT_RESOURCE_URL = "oe2/keymanager/decrypt";
@@ -45,23 +45,25 @@ public class KeyManagerImpl implements KeyManager {
         Connection httpClient = new ConnectionImpl(config, hasher, client);
         WrappingKeyFactory rsaSSAPKCS1KeyFactory = new RsaSsaPkcs1ShaFactory(randomService);
 
-        Map<String, WrappingKeyOperation> operations = new HashMap<String, WrappingKeyOperation>();
+        Map<String, WrappingKeyOperation> operations = new HashMap();
         operations.put(AlgorithmTypeValue.RSA_SSA_PKCS1_2048_SHA256_F4, new RsaSsaPkcs1ShaOperation(rsaSSAPKCS1KeyFactory));
         this.keyManager = httpClient;
         this.configuration = config;
         this.operation = operations;
     }
 
-
     @Override
     public Triplet<byte[], byte[], String> FetchEncryptionKey() throws Exception {
         String operation = "FetchEncryptionKey";
         EncryptionOpenRequest request = new EncryptionOpenRequest();
-        byte[] data;
         Triplet<byte[], byte[], String> trip;
+
         try {
-            data = this.keyManager.Post(ENCRYPT_RESOURCE_URL, request);
-            EncryptionOpenResponse response = new Gson().fromJson(data.toString(), EncryptionOpenResponse.class);
+            byte[] data = this.keyManager.Post(ENCRYPT_RESOURCE_URL, request);
+            System.out.println(new String(data, StandardCharsets.UTF_8));
+            EncryptionOpenResponse response = new Gson().fromJson(new String(data, StandardCharsets.UTF_8), EncryptionOpenResponse.class);
+
+            //TODO: consider to convert to base64 before use
             byte[] edk = response.getDK().getEncryptedDataKey();
             byte[] wdk = response.getDK().getWrappedDataKey();
             byte[] epk = response.getWK().getEncryptedPrivateKey();
@@ -80,11 +82,11 @@ public class KeyManagerImpl implements KeyManager {
     @Override
     public byte[] FetchDecryptionKey(byte[]edk) throws Exception {
         String operation = "FetchDecryptionKey";
-        DecryptionOpenRequest request = new DecryptionOpenRequest(edk.toString());
+        DecryptionOpenRequest request = new DecryptionOpenRequest(new String(edk));
         byte[] dk;
         try {
             byte[] data = this.keyManager.Post(DECRYPT_RESOURCE_URL, request);
-            DecryptionOpenResponse response = new Gson().fromJson(data.toString(), DecryptionOpenResponse.class);
+            DecryptionOpenResponse response = new Gson().fromJson(new String(data), DecryptionOpenResponse.class);
             byte[] wdk = response.getDK().getWrappedDataKey();
             byte[] epk = response.getWK().getEncryptedPrivateKey();
             byte[] fp = response.getWK().getKeyFingerprint();

@@ -4,6 +4,7 @@ import com.onqlave.service.CPRNGService;
 import com.onqlave.types.AEAD;
 import com.onqlave.types.Key;
 import com.onqlave.types.KeyData;
+import com.onqlave.utils.AESAEADHelper;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
@@ -19,45 +20,28 @@ public class AesGcmAead implements AEAD {
 
 
     private CPRNGService randomService;
-    private byte[] key;
+    private Key key;
     private Boolean prependIV;
 
     //TODO: consider review this constructor
     public AesGcmAead(Key key, CPRNGService randomService) throws Exception {
-        KeyData keyData = key.Data();
-
-        //TODO: consider to add try/catch block here if you want to handle exception
-        byte[] keyValue = keyData.GetValue();
-        if (validateKeySize(keyValue.length)) {
-            throw new Exception("invalid AES key size");
-        }
-
         //TODO: need to review again
         this.randomService = randomService;
-        this.key = keyValue;
+        this.key = key;
         this.prependIV = true;
     }
 
     @Override
     public byte[] Encrypt(byte[] plaintext, byte[] associatedData) throws Exception {
         byte[] iv = randomService.GetRandomBytes(AES_GCM_IV_SIZE);
-        if (iv.length != AES_GCM_IV_SIZE) {
-            throw new Exception(String.format("unexpected IV size: got %d, want % d", iv.length, AES_GCM_IV_SIZE));
-        }
-        Cipher cipher = newCipher();
-        GCMParameterSpec spec = new GCMParameterSpec(AES_GCM_TAG_SIZE * 8, iv);
-        cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, "AES"), spec);
-
-        byte[] ciphertext = cipher.doFinal(plaintext);
-
+        byte[] cipherText = AESAEADHelper.Encrypt(plaintext, associatedData, this.key.Data().GetValue(), iv);
         if (prependIV) {
-            byte[] ivAndCiphertext = new byte[AES_GCM_IV_SIZE + ciphertext.length];
-            System.arraycopy(iv, 0, ivAndCiphertext, 0, iv.length);
-            System.arraycopy(ciphertext, 0, ivAndCiphertext, AES_GCM_IV_SIZE, ciphertext.length);
-            return ivAndCiphertext;
-        } else {
-            return ciphertext;
+            byte[] cipherTextWithIV = new byte[cipherText.length + iv.length];
+            System.arraycopy(iv, 0, cipherTextWithIV, 0, iv.length);
+            System.arraycopy(cipherText, 0, cipherTextWithIV, iv.length, cipherText.length);
+            return cipherTextWithIV;
         }
+        return cipherText;
     }
 
     @Override
@@ -83,11 +67,7 @@ public class AesGcmAead implements AEAD {
             actualCipherText = cipherText;
         }
 
-        Cipher cipher = newCipher();
-        GCMParameterSpec spec = new GCMParameterSpec(AES_GCM_TAG_SIZE * 8, iv);
-        cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key, "AES"), spec);
-        return cipher.doFinal(actualCipherText);
-
+        return AESAEADHelper.Decrypt(actualCipherText, associatedData, this.key.Data().GetValue(), iv);
     }
 
     public static boolean validateKeySize(int sizeInBytes) {
@@ -97,9 +77,5 @@ public class AesGcmAead implements AEAD {
             default:
                 return false;
         }
-    }
-
-    private Cipher newCipher() throws NoSuchAlgorithmException, GeneralSecurityException {
-        return Cipher.getInstance("AES/GCM/NoPadding");
     }
 }

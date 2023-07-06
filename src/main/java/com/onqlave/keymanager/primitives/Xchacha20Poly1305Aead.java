@@ -3,6 +3,7 @@ package com.onqlave.keymanager.primitives;
 import com.onqlave.service.CPRNGService;
 import com.onqlave.types.AEAD;
 import com.onqlave.types.Key;
+import com.onqlave.utils.XChaCha20Poly1305Helper;
 
 import javax.crypto.AEADBadTagException;
 import javax.crypto.Cipher;
@@ -27,42 +28,12 @@ public class Xchacha20Poly1305Aead implements AEAD {
 
     @Override
     public byte[] Encrypt(byte[] plaintext, byte[] associatedData) throws Exception {
-        byte[] nonce = generateNonce();
-        byte[] ciphertext;
-        try {
-            Cipher cipher = Cipher.getInstance("XChaCha20-Poly1305/None/NoPadding");
-            GCMParameterSpec spec = new GCMParameterSpec(XChaCha20Poly1305TagSize * 8, nonce);
-            SecretKeySpec keySpec = new SecretKeySpec(key.Data().GetValue(), "XChaCha20Poly1305");
-            cipher.init(Cipher.ENCRYPT_MODE, keySpec, spec);
-            cipher.updateAAD(associatedData);
-            ciphertext = cipher.doFinal(plaintext);
-        } catch (Exception e) {
-            throw new Exception("Encryption failed: " + e.getMessage());
-        }
-        return concatenateByteArrays(nonce, ciphertext);
+        return XChaCha20Poly1305Helper.Encrypt(key.Data().GetValue(), plaintext, associatedData);
     }
 
     @Override
     public byte[] Decrypt(byte[] cipherText, byte[] associatedData) throws Exception {
-        if (cipherText.length < XChaCha20Poly1305NonceSize + XChaCha20Poly1305TagSize) {
-            throw new Exception("Ciphertext too short");
-        }
-        byte[] nonce = Arrays.copyOfRange(cipherText, 0, XChaCha20Poly1305NonceSize);
-        byte[] encryptedData = Arrays.copyOfRange(cipherText, XChaCha20Poly1305NonceSize, cipherText.length);
-        byte[] plaintext;
-        try {
-            Cipher cipher = Cipher.getInstance("XChaCha20-Poly1305/None/NoPadding");
-            GCMParameterSpec spec = new GCMParameterSpec(XChaCha20Poly1305TagSize * 8, nonce);
-            SecretKeySpec keySpec = new SecretKeySpec(key.Data().GetValue(), "XChaCha20Poly1305");
-            cipher.init(Cipher.DECRYPT_MODE, keySpec, spec);
-            cipher.updateAAD(associatedData);
-            plaintext = cipher.doFinal(encryptedData);
-        } catch (AEADBadTagException e) {
-            throw new Exception("Authentication failed: " + e.getMessage());
-        } catch (Exception e) {
-            throw new Exception("Decryption failed: " + e.getMessage());
-        }
-        return plaintext;
+        return XChaCha20Poly1305Helper.Decrypt(this.key.Data().GetValue(), cipherText, associatedData);
     }
 
     private byte[] generateNonce() {

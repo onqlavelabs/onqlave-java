@@ -5,6 +5,7 @@ import com.onqlave.types.AlgorithmSeriliser;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Base64;
 
 public class PlainStreamProcessorImpl implements PlainStreamProcessor {
     public OutputStream getCipherStream() {

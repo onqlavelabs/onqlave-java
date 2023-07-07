@@ -3,7 +3,6 @@ package com.onqlave.types;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.Arrays;
 
 public class Algorithm implements AlgorithmSeriliser, AlgorithmDeserialiser {
     private byte version;
@@ -17,7 +16,6 @@ public class Algorithm implements AlgorithmSeriliser, AlgorithmDeserialiser {
     }
 
     public Algorithm() {
-
     }
 
     public byte getVersion() {
@@ -26,14 +24,6 @@ public class Algorithm implements AlgorithmSeriliser, AlgorithmDeserialiser {
 
     public void setVersion(byte version) {
         this.version = version;
-    }
-
-    public byte getAlgo() {
-        return this.algo;
-    }
-
-    public void setAlgo(byte algo) {
-        this.algo = algo;
     }
 
     public byte[] getKey() {
@@ -59,7 +49,6 @@ public class Algorithm implements AlgorithmSeriliser, AlgorithmDeserialiser {
         return AlgorithmTypeName.fromValue(algo);
     }
 
-    //TODO: consider to review
     @Override
     public byte[] Serialise() throws Exception {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

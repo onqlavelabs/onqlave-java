@@ -19,14 +19,6 @@ public class DecryptionOpenRequest implements OnqlaveRequest {
         this.EDK = EDK;
     }
 
-    public String getEDK() {
-        return EDK;
-    }
-
-    public void setEDK(String EDK) {
-        this.EDK = EDK;
-    }
-
     @Override
     public byte[] GetContent() throws Exception {
        return ObjectToByteConverter.convertObjectToBytes(this);

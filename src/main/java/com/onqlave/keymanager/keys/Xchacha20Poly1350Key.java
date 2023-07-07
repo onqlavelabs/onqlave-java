@@ -1,6 +1,5 @@
 package com.onqlave.keymanager.keys;
 
-import com.onqlave.keymanager.factories.Xchacha20Poly1305Factory;
 import com.onqlave.types.Key;
 import com.onqlave.types.KeyData;
 import com.onqlave.types.KeyOperation;

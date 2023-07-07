@@ -10,7 +10,6 @@ import java.security.*;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.util.Base64;
 
-
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.openssl.*;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
@@ -19,7 +18,6 @@ import org.bouncycastle.operator.InputDecryptorProvider;
 import org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo;
 
 public class RsaSsaPkcs1Sha implements Unwrapping {
-
     private CPRNGService randomService;
     private MessageDigest hashFunc;
     private int hashID;
@@ -52,7 +50,6 @@ public class RsaSsaPkcs1Sha implements Unwrapping {
 
         if (object instanceof PKCS8EncryptedPrivateKeyInfo) {
             PKCS8EncryptedPrivateKeyInfo encryptedPrivateKeyInfo = (PKCS8EncryptedPrivateKeyInfo) object;
-
             InputDecryptorProvider decryptionProv = new JceOpenSSLPKCS8DecryptorProviderBuilder().build(password.toCharArray());
             PrivateKeyInfo keyInfo = encryptedPrivateKeyInfo.decryptPrivateKeyInfo(decryptionProv);
             JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider("BC");

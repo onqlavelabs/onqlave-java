@@ -9,7 +9,6 @@ public class AesGcmKeyFormat implements KeyFormat {
     public AesGcmKeyFormat(int keySize, int version) {
         this.keySize = keySize;
         this.version = version;
-
     }
 
     @Override

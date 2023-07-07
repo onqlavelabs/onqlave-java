@@ -1,7 +1,6 @@
 package com.onqlave.keymanager.factories;
 
 import com.onqlave.keymanager.operations.RsaSsaPkcs1ShaKeyFormat;
-import com.onqlave.keymanager.primitives.HashFunction;
 import com.onqlave.keymanager.primitives.RsaSsaPkcs1Sha;
 import com.onqlave.service.CPRNGService;
 import com.onqlave.types.HashType;
@@ -9,7 +8,6 @@ import com.onqlave.types.Unwrapping;
 import com.onqlave.types.WrappingKeyFactory;
 import com.onqlave.types.WrappingKeyOperation;
 import org.javatuples.Pair;
-import org.javatuples.Triplet;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

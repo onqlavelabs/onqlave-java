@@ -12,15 +12,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 public class EncryptedStreamProcessorImpl implements EncryptedStreamProcessor {
-    public InputStream getCipherStream() {
-        return cipherStream;
-    }
-
-    public void setCipherStream(InputStream cipherStream) {
-        this.cipherStream = cipherStream;
-    }
-
-    private  InputStream cipherStream;
+    private InputStream cipherStream;
 
     public EncryptedStreamProcessorImpl(InputStream cipherStream) {
         this.cipherStream = cipherStream;
@@ -28,7 +20,6 @@ public class EncryptedStreamProcessorImpl implements EncryptedStreamProcessor {
 
     @Override
     public AlgorithmDeserialiser ReadHeader() throws Exception {
-
         byte[] headerLenBuffer = new byte[4];
         int dataLen = this.cipherStream.read(headerLenBuffer);
         if (dataLen == -1) {
@@ -54,7 +45,6 @@ public class EncryptedStreamProcessorImpl implements EncryptedStreamProcessor {
 
     @Override
     public byte[] ReadPacket() throws Exception {
-
         byte[] packetLenBuffer = new byte[4];
         int dataLen = cipherStream.read(packetLenBuffer);
         if (dataLen < 4) {

@@ -34,7 +34,6 @@ public class PlainStreamProcessorImpl implements PlainStreamProcessor {
         dataLenBuffer.order(ByteOrder.BIG_ENDIAN);
         dataLenBuffer.putInt(packet.length);
         byte[] dataLen = dataLenBuffer.array();
-
         cipherStream.write(dataLen);
         cipherStream.write(packet);
     }

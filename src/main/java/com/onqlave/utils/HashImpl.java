@@ -20,9 +20,6 @@ public class HashImpl implements Hasher {
     @Override
     public String Digest(OnqlaveRequest body) throws Exception {
         byte[] content = body.GetContent();
-//        if (content.length < 1) {
-//            throw new Exception("Request body content is null");
-//        }
         byte[] digestBytes = MessageDigest.getInstance(DIGEST_ALGORITHM).digest(content);
         if (digestBytes.length < 1) {
             throw new Exception("Digest bytes is empty");
@@ -34,13 +31,11 @@ public class HashImpl implements Hasher {
     @Override
     public String Sign(Map<String, String> headers, String signingKey) throws Exception {
         Mac mac = Mac.getInstance(SIGNATURE_ALGORITHM);
-
         SecretKeySpec signingKeySpec = new SecretKeySpec(signingKey.getBytes(StandardCharsets.UTF_8), SIGNATURE_ALGORITHM);
         mac.init(signingKeySpec);
 
         Map<String, String> sortedHeaders = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         sortedHeaders.putAll(headers);
-        System.out.println(sortedHeaders);
 
         StringBuilder signatureBuilder = new StringBuilder();
         for (Map.Entry<String, String> header : sortedHeaders.entrySet()) {

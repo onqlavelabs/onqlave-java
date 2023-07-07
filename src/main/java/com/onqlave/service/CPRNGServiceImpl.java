@@ -1,6 +1,5 @@
 package com.onqlave.service;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
@@ -8,10 +7,8 @@ import java.security.SecureRandom;
 
 public class CPRNGServiceImpl implements CPRNGService {
     private SecureRandom random;
-
     public CPRNGServiceImpl() throws NoSuchAlgorithmException {
         this.random = SecureRandom.getInstanceStrong();
-
     }
 
     @Override
@@ -19,7 +16,6 @@ public class CPRNGServiceImpl implements CPRNGService {
         byte[] buf = new byte[numberBytes];
         random.nextBytes(buf);
         return buf;
-
     }
 
     @Override

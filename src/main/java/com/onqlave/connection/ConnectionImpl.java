@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ConnectionImpl implements Connection {
-    private static final Logger LOGGER = LogManager.getLogger(ConnectionImpl.class);
+    private static final Logger LOGGER = LogManager.getLogger();
     private Hasher hasher;
     private Configuration configuration;
 
@@ -55,6 +55,7 @@ public class ConnectionImpl implements Connection {
             byte[] response = this.client.Post(url, body, headers);
             return response;
         } catch (Exception e) {
+            LOGGER.error(String.format("[onqlave] SDK: %s - Failed sending %s request", operation, "HTTP:POST"));
             throw new Exception("cannot connect to server");
         }
     }

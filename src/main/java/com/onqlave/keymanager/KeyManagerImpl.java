@@ -19,12 +19,17 @@ import com.onqlave.types.AlgorithmTypeValue;
 import com.onqlave.types.Unwrapping;
 import com.onqlave.types.WrappingKeyFactory;
 import com.onqlave.types.WrappingKeyOperation;
+import com.onqlave.utils.DurationFormatter;
 import com.onqlave.utils.HashImpl;
 import com.onqlave.utils.Hasher;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.javatuples.Triplet;
 
 import java.net.http.HttpClient;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,6 +40,8 @@ public class KeyManagerImpl implements KeyManager {
     private Configuration configuration;
 
     private Map<String, WrappingKeyOperation> operation;
+
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String ENCRYPT_RESOURCE_URL = "oe2/keymanager/encrypt";
     private static final String DECRYPT_RESOURCE_URL = "oe2/keymanager/decrypt";
@@ -55,6 +62,9 @@ public class KeyManagerImpl implements KeyManager {
     @Override
     public Triplet<byte[], byte[], String> FetchEncryptionKey() throws Exception {
         String operation = "FetchEncryptionKey";
+        Instant start = Instant.now();
+        LOGGER.debug(String.format("[onqlave] SDK: %s - Fetching encryption key", operation));
+
         EncryptionOpenRequest request = new EncryptionOpenRequest();
         Triplet<byte[], byte[], String> trip;
 
@@ -73,15 +83,21 @@ public class KeyManagerImpl implements KeyManager {
             byte[] dk = this.unwrapKey(wrappingAlgo, operation, wdk, epk, fp, this.configuration.getCredential().getSecretKey().getBytes());
             trip = Triplet.with(edk, dk, algo);
         } catch (Exception e) {
+            LOGGER.error(String.format("[onqlave] SDK: %s - Failed fetching encryption key", operation));
             throw new OnqlaveError(SdkErrorCode, e.getMessage(), null);
         }
 
+        String duration = DurationFormatter.DurationBetween(start, Instant.now());
+        LOGGER.debug(String.format("[onqlave] SDK: %s - Fetched encryption key: operation took %s", operation, duration));
         return trip;
     }
 
     @Override
     public byte[] FetchDecryptionKey(byte[]edk) throws Exception {
         String operation = "FetchDecryptionKey";
+        Instant start = Instant.now();
+        LOGGER.debug(String.format("[onqlave] SDK: %s - Fetching decryption key", operation));
+
         DecryptionOpenRequest request = new DecryptionOpenRequest(new String(edk));
         byte[] dk;
         try {
@@ -93,8 +109,12 @@ public class KeyManagerImpl implements KeyManager {
             String wrappingAlgo = response.getSecurityModel().getWrappingAlgorithm();
             dk = this.unwrapKey(wrappingAlgo, operation, wdk, epk, fp, this.configuration.getCredential().getSecretKey().getBytes());
         } catch (Exception e) {
+            LOGGER.error(String.format("[onqlave] SDK: %s - Failed fetching decryption key", operation));
             throw new OnqlaveError(ErrorCodes.SdkErrorCode, e.getMessage(), null);
         }
+
+        String duration = DurationFormatter.DurationBetween(start, Instant.now());
+        LOGGER.debug(String.format("[onqlave] SDK: %s - Fetched decryption key: operation took %s", operation, duration));
         return dk;
     }
 
@@ -109,6 +129,7 @@ public class KeyManagerImpl implements KeyManager {
             Unwrapping primitive = factory.Primitive(wrappingOp);
             dk = primitive.UnwrapKey(wdk, epk, fp, password);
         } catch (Exception e) {
+            LOGGER.error(String.format("[onqlave] SDK: %s - Failed unwrap key", operation));
             throw e;
         }
         return dk;

@@ -15,7 +15,9 @@ public class Credential {
         return accessKey;
     }
 
-    public String getSigningKey() { return signingKey; }
+    public String getSigningKey() {
+        return signingKey;
+    }
 
     public String getSecretKey() {
         return secretKey;

@@ -16,6 +16,7 @@ public class HashFunction {
             default -> null;
         };
     }
+
     public static String GetAlgo(HashType value) throws IllegalArgumentException {
         return switch (value.getValue()) {
             case 0 -> "UNKNOWN_HASH";

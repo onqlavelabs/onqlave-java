@@ -1,5 +1,6 @@
 package com.onqlave.keymanager.factories;
 
+import com.onqlave.exception.SecurityException;
 import com.onqlave.keymanager.operations.Aes128GcmOperation;
 import com.onqlave.service.CPRNGService;
 import com.onqlave.service.IDService;
@@ -20,7 +21,7 @@ public class AesGcmFactory implements KeyFactory {
     public Key NewKey(KeyOperation operation) throws Exception {
         KeyFormat format = operation.GetFormat();
         if (this.validateKeyFormat(format)) {
-            throw new Exception("aesGcmKeyFactory: invalid key format.");
+            throw new SecurityException("aesGcmKeyFactory: invalid key format.");
         }
 
         byte[] keyData = this.randomService.GetRandomBytes(format.Size());
@@ -54,7 +55,7 @@ public class AesGcmFactory implements KeyFactory {
             return false;
         }
 
-        if (!AesGcmAead.validateKeySize(keyData.GetValue().length)) {
+        if (!AesGcmAead.ValidateKeySize(keyData.GetValue().length)) {
             return false;
         }
 
@@ -62,7 +63,7 @@ public class AesGcmFactory implements KeyFactory {
     }
 
     private boolean validateKeyFormat(KeyFormat format) {
-        if (!AesGcmAead.validateKeySize(format.Size())) {
+        if (!AesGcmAead.ValidateKeySize(format.Size())) {
             return false;
         }
         return true;

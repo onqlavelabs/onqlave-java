@@ -9,14 +9,6 @@ public class IDServiceImpl implements IDService {
         this.randomService = randomService;
     }
 
-    public CPRNGService getRandomService() {
-        return randomService;
-    }
-
-    public void setRandomService(CPRNGService randomService) {
-        this.randomService = randomService;
-    }
-
     @Override
     public String NewStringID() {
         return UUID.randomUUID().toString();

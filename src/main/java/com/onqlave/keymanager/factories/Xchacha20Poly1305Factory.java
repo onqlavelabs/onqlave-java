@@ -20,7 +20,7 @@ public class Xchacha20Poly1305Factory implements KeyFactory {
     @Override
     public Key NewKey(KeyOperation operation) throws Exception {
         KeyFormat format = operation.GetFormat();
-        if (this.validateKeyFormat(format)) {
+        if (this.ValidateKeyFormat(format)) {
             throw new Exception("aesGcmKeyFactory: invalid key format.");
         }
 
@@ -32,7 +32,7 @@ public class Xchacha20Poly1305Factory implements KeyFactory {
     @Override
     public Key NewKeyFromData(KeyOperation operation, byte[] keyData) throws Exception {
         KeyFormat format = operation.GetFormat();
-        if (this.validateKeyFormat(format)) {
+        if (this.ValidateKeyFormat(format)) {
             throw new Exception("aesGcmKeyFactory: invalid key format.");
         }
         return new Xchacha20Poly1350Key(this.idService.NewKeyID(), operation,
@@ -41,41 +41,41 @@ public class Xchacha20Poly1305Factory implements KeyFactory {
 
     @Override
     public AEAD Primitive(Key key) throws Exception {
-        if (this.validateKey(key)) {
+        if (this.ValidateKey(key)) {
             return null;
         }
         return new Xchacha20Poly1305Aead(this.randomService, key,true);
     }
 
-    private boolean validateKey(Key key) throws Exception {
-        if (this.validateKeyVersion(key.Data().GetVersion(), Xchacha20Poly1305Operation.XCHACHA20_POLY1305_VERSION)) {
+    private boolean ValidateKey(Key key) throws Exception {
+        if (this.ValidateKeyVersion(key.Data().GetVersion(), Xchacha20Poly1305Operation.XCHACHA20_POLY1305_VERSION)) {
             return false;
         }
 
         byte[] value = key.Data().GetValue();
 
-        if (this.validateXChaChaKeySize(value.length)) {
+        if (this.ValidateXChaChaKeySize(value.length)) {
             return false;
         }
 
         return true;
     }
 
-    private boolean validateKeyFormat(KeyFormat format) {
-        if (this.validateXChaChaKeySize(format.Size())) {
+    private boolean ValidateKeyFormat(KeyFormat format) {
+        if (this.ValidateXChaChaKeySize(format.Size())) {
             return false;
         }
         return true;
     }
 
-    private boolean validateKeyVersion(int version, int maxExpected) {
+    private boolean ValidateKeyVersion(int version, int maxExpected) {
         if (version > maxExpected) {
             return false;
         }
         return true;
     }
 
-    private boolean validateXChaChaKeySize(int sizeInBytes) {
+    private boolean ValidateXChaChaKeySize(int sizeInBytes) {
         if (sizeInBytes != 32) {
             return false;
         }

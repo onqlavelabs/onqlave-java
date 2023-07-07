@@ -3,22 +3,13 @@ package com.onqlave.keymanager.primitives;
 import com.onqlave.service.CPRNGService;
 import com.onqlave.types.AEAD;
 import com.onqlave.types.Key;
-import com.onqlave.types.KeyData;
 import com.onqlave.utils.AESAEADHelper;
 
-import javax.crypto.Cipher;
-import javax.crypto.spec.GCMParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
-
-import java.security.GeneralSecurityException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 import static com.onqlave.utils.Constants.*;
 
 public class AesGcmAead implements AEAD {
-
-
     private CPRNGService randomService;
     private Key key;
     private Boolean prependIV;
@@ -70,7 +61,7 @@ public class AesGcmAead implements AEAD {
         return AESAEADHelper.Decrypt(actualCipherText, associatedData, this.key.Data().GetValue(), iv);
     }
 
-    public static boolean validateKeySize(int sizeInBytes) {
+    public static boolean ValidateKeySize(int sizeInBytes) {
         switch (sizeInBytes) {
             case 16, 32:
                 return true;

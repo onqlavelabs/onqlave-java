@@ -17,28 +17,4 @@ public class RetrySettings {
     public int getMaxRetries() {
         return maxRetries;
     }
-
-    public void setCount(int maxRetries) {
-        this.maxRetries = maxRetries;
-    }
-
-    public Duration getWaitTime() {
-        return waitTime;
-    }
-
-    public void setWaitTime(Duration waitTime) {
-        this.waitTime = waitTime;
-    }
-
-    public Duration getMaxWaitTime() {
-        return maxWaitTime;
-    }
-
-    public void setMaxWaitTime(Duration maxWaitTime) {
-        this.maxWaitTime = maxWaitTime;
-    }
-
-    public void Valid() throws Exception {
-        // TODO:
-    }
 }

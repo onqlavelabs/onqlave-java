@@ -7,7 +7,6 @@ public class AesGcmKeyData implements KeyData {
     public String typeURL;
     public byte[] value;
     public KeyMaterialType keyMaterialType;
-
     public int version;
 
     public AesGcmKeyData(String typeURL, byte[] value, KeyMaterialType keyMaterialType, int version) {

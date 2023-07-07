@@ -73,14 +73,13 @@ public class KeyManagerImpl implements KeyManager {
             System.out.println(new String(data, StandardCharsets.UTF_8));
             EncryptionOpenResponse response = new Gson().fromJson(new String(data, StandardCharsets.UTF_8), EncryptionOpenResponse.class);
 
-            //TODO: consider to convert to base64 before use
             byte[] edk = response.getDK().getEncryptedDataKey();
             byte[] wdk = response.getDK().getWrappedDataKey();
             byte[] epk = response.getWK().getEncryptedPrivateKey();
             byte[] fp = response.getWK().getKeyFingerprint();
             String wrappingAlgo = response.getSecurityModel().getWrappingAlgorithm();
             String algo = response.getSecurityModel().getAlgorithm();
-            byte[] dk = this.unwrapKey(wrappingAlgo, operation, wdk, epk, fp, this.configuration.getCredential().getSecretKey().getBytes());
+            byte[] dk = this.UnwrapKey(wrappingAlgo, operation, wdk, epk, fp, this.configuration.getCredential().getSecretKey().getBytes());
             trip = Triplet.with(edk, dk, algo);
         } catch (Exception e) {
             LOGGER.error(String.format("[onqlave] SDK: %s - Failed fetching encryption key", operation));
@@ -107,7 +106,7 @@ public class KeyManagerImpl implements KeyManager {
             byte[] epk = response.getWK().getEncryptedPrivateKey();
             byte[] fp = response.getWK().getKeyFingerprint();
             String wrappingAlgo = response.getSecurityModel().getWrappingAlgorithm();
-            dk = this.unwrapKey(wrappingAlgo, operation, wdk, epk, fp, this.configuration.getCredential().getSecretKey().getBytes());
+            dk = this.UnwrapKey(wrappingAlgo, operation, wdk, epk, fp, this.configuration.getCredential().getSecretKey().getBytes());
         } catch (Exception e) {
             LOGGER.error(String.format("[onqlave] SDK: %s - Failed fetching decryption key", operation));
             throw new OnqlaveError(ErrorCodes.SdkErrorCode, e.getMessage(), null);
@@ -118,7 +117,7 @@ public class KeyManagerImpl implements KeyManager {
         return dk;
     }
 
-    private byte[] unwrapKey(String algo, String operation, byte[] wdk, byte[] epk, byte[] fp, byte[] password) throws Exception {
+    private byte[] UnwrapKey(String algo, String operation, byte[] wdk, byte[] epk, byte[] fp, byte[] password) throws Exception {
         if (!this.operation.containsKey(AlgorithmTypeValue.RSA_SSA_PKCS1_2048_SHA256_F4)) {
             throw new OnqlaveError(SdkErrorCode, "Error Unwrapkey", null);
         }

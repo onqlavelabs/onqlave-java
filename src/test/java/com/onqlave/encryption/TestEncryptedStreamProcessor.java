@@ -42,6 +42,9 @@ public class TestEncryptedStreamProcessor {
     ByteArrayInputStream cipherStream = new ByteArrayInputStream(cipherData);
     EncryptedStreamProcessor processor = new EncryptedStreamProcessorImpl(cipherStream);
     AlgorithmDeserialiser algo = processor.ReadHeader();
+    byte[] writtenPacket = processor.ReadPacket();
+
+    assertArrayEquals(inputData, writtenPacket);
 
     assertNotNull(algo);
     assertEquals(algo.Version(), 0);
@@ -49,8 +52,4 @@ public class TestEncryptedStreamProcessor {
     assertEquals(algo.GetAlgorithm(), "aes-gcm-128");
   }
 
-  @Test
-  public void TestWritePacket() {
-
-  }
 }

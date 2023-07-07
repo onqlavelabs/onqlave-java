@@ -34,9 +34,10 @@ public class TestAESGCMAEAD {
     AesGcmAead encryptor = new AesGcmAead(key, randomService);
 
     String plainText = "this is a test plaintext";
-    byte[] cipherText = encryptor.Encrypt(plainText.getBytes(), null);
+    String associatedData = "this is associated data";
+    byte[] cipherText = encryptor.Encrypt(plainText.getBytes(), associatedData.getBytes());
 
-    byte[] decryptedText = encryptor.Decrypt(cipherText, null);
+    byte[] decryptedText = encryptor.Decrypt(cipherText, associatedData.getBytes());
 
     assertArrayEquals(plainText.getBytes(), decryptedText);
   }
@@ -45,24 +46,6 @@ public class TestAESGCMAEAD {
   public void TestEncryptDecrypt_32ByteKeySize() throws Exception {
     CPRNGService randomService = new CPRNGServiceImpl();
     byte[] keyVal = {1, 2, 3 , 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 , 14, 15, 16, 1, 2, 3 , 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 , 14, 15, 16};
-
-    when(key.Data()).thenReturn(keydata);
-    when(keydata.GetValue()).thenReturn(keyVal);
-
-    AesGcmAead encryptor = new AesGcmAead(key, randomService);
-
-    String plainText = "this is a test plaintext";
-    byte[] cipherText = encryptor.Encrypt(plainText.getBytes(), null);
-
-    byte[] decryptedText = encryptor.Decrypt(cipherText, null);
-
-    assertArrayEquals(plainText.getBytes(), decryptedText);
-  }
-
-  @Test
-  public void TestEncryptDecrypt_WithAssociatedData() throws Exception {
-    CPRNGService randomService = new CPRNGServiceImpl();
-    byte[] keyVal = {1, 2, 3 , 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 , 14, 15, 16};
 
     when(key.Data()).thenReturn(keydata);
     when(keydata.GetValue()).thenReturn(keyVal);
@@ -88,21 +71,26 @@ public class TestAESGCMAEAD {
 
     AesGcmAead encryptor = new AesGcmAead(key, randomService);
 
-    byte[] plainText = null;
+    String associatedData = "this is associated data";
 
     // throw new IllegalArgumentException
-    byte[] cipherText = encryptor.Encrypt(plainText, null);
+    byte[] cipherText = encryptor.Encrypt(null, associatedData.getBytes());
   }
 
-  @Test (expected = Exception.class)
-  public void TestEncryptDecrypt_InvalidKeySize() throws Exception {
+  @Test (expected = IllegalArgumentException.class)
+  public void TestEncryptDecrypt_NullAssociatedData() throws Exception {
     CPRNGService randomService = new CPRNGServiceImpl();
-    byte[] keyVal = {1, 2, 3};
+    byte[] keyVal = {1, 2, 3 , 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 , 14, 15, 16};
 
     when(key.Data()).thenReturn(keydata);
     when(keydata.GetValue()).thenReturn(keyVal);
 
-    // throw new Exception("invalid AES key size")
     AesGcmAead encryptor = new AesGcmAead(key, randomService);
+
+    String plainText = "this is a test plaintext";
+
+    // throw new IllegalArgumentException
+    byte[] cipherText = encryptor.Encrypt(plainText.getBytes(), null);
   }
+
 }

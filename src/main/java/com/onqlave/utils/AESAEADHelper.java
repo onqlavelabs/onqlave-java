@@ -21,10 +21,18 @@ public class AESAEADHelper {
     }
 
     public static byte[] Decrypt(byte[] cipherText, byte[] associatedData, byte[] key, byte[] iv) throws Exception {
-        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-        GCMParameterSpec spec = new GCMParameterSpec(AES_GCM_TAG_SIZE * 8, iv);
-        cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key, "AES"), spec);
-        cipher.updateAAD(associatedData);
-        return cipher.doFinal(cipherText);
+        try {
+            Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+
+            GCMParameterSpec spec = new GCMParameterSpec(AES_GCM_TAG_SIZE * 8, iv);
+            cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key, "AES"), spec);
+            cipher.updateAAD(associatedData);
+
+            return cipher.doFinal(cipherText);
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return new byte[0];
     }
 }

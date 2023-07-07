@@ -132,7 +132,6 @@ public class Encryption {
     public void EncryptStream(InputStream plainStream, OutputStream cipherStream, byte[] associatedData) throws Exception {
         String operation = "EncryptStream";
         Instant start = Instant.now();
-
         Pair<AlgorithmSeriliser, AEAD> result = this.initEncryptOperation(operation);
         AlgorithmSeriliser header = result.getValue0();
         AEAD primitive = result.getValue1();
@@ -144,7 +143,9 @@ public class Encryption {
         while (true) {
             try {
                 int datalen = plainStream.read(tempBuffer);
-
+                if (datalen == -1) {
+                    break;
+                }
                 String bufferStr = new String(tempBuffer);
                 byte[] cipherText = primitive.Encrypt(Arrays.copyOfRange(bufferStr.getBytes(), 0, datalen), associatedData);
                 processor.WritePacket(cipherText);
@@ -186,11 +187,10 @@ public class Encryption {
         Pair<AlgorithmSeriliser, AEAD> tup = this.initEncryptOperation(operation);
         AlgorithmSeriliser algo = tup.getValue0();
         AEAD primitive = tup.getValue1();
-
         byte[] header = algo.Serialise();
         Map<String, byte[]> result = new HashMap<>();
         TypeResolver resolver = new TypeResolverImpl();
-        for (Map.Entry<String, byte[]> e : result.entrySet()) {
+        for (Map.Entry<String, Object> e : plainStructure.entrySet()) {
             byte[] plainData = resolver.Serialise(e.getKey(), e.getValue());
 
             byte[] cipherData = primitive.Encrypt(plainData, associatedData);
@@ -216,7 +216,6 @@ public class Encryption {
             Object plainValue = resolver.Deserialise(e.getKey(), plainData);
             result.put(e.getKey(), plainValue);
         }
-
         return result;
     }
 }

@@ -2,7 +2,11 @@ package com.onqlave.encryption;
 
 import com.onqlave.types.Algorithm;
 import com.onqlave.types.AlgorithmDeserialiser;
+import org.javatuples.Pair;
+import org.javatuples.Tuple;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -23,18 +27,20 @@ public class EncryptedStreamProcessorImpl implements EncryptedStreamProcessor {
     }
 
     @Override
-    public AlgorithmDeserialiser ReadHeader()throws Exception{
+    public AlgorithmDeserialiser ReadHeader() throws Exception {
+
         byte[] headerLenBuffer = new byte[4];
-        int dataLen = cipherStream.read(headerLenBuffer);
+        int dataLen = this.cipherStream.read(headerLenBuffer);
         if (dataLen == -1) {
             throw new IOException("End of stream reached");
         }
+
         if (dataLen < 4) {
             throw new IOException("Invalid cipher data");
         }
         int headerLen = ByteBuffer.wrap(headerLenBuffer).getInt();
         byte[] headerBuffer = new byte[headerLen - 4];
-        dataLen = cipherStream.read(headerBuffer);
+        dataLen = this.cipherStream.read(headerBuffer);
         if (dataLen == -1) {
             throw new IOException("End of stream reached");
         }
@@ -48,8 +54,9 @@ public class EncryptedStreamProcessorImpl implements EncryptedStreamProcessor {
 
     @Override
     public byte[] ReadPacket() throws Exception {
+
         byte[] packetLenBuffer = new byte[4];
-        int dataLen = this.cipherStream.read(packetLenBuffer);
+        int dataLen = cipherStream.read(packetLenBuffer);
         if (dataLen < 4) {
             throw new IOException("Invalid cipher data");
         }

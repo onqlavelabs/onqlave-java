@@ -4,6 +4,7 @@ import com.onqlave.service.CPRNGService;
 import com.onqlave.types.AEAD;
 import com.onqlave.types.Key;
 import com.onqlave.utils.AESAEADHelper;
+import org.apache.logging.log4j.message.StringFormattedMessage;
 
 import java.util.Arrays;
 
@@ -61,12 +62,9 @@ public class AesGcmAead implements AEAD {
         return AESAEADHelper.Decrypt(actualCipherText, associatedData, this.key.Data().GetValue(), iv);
     }
 
-    public static boolean ValidateKeySize(int sizeInBytes) {
-        switch (sizeInBytes) {
-            case 16, 32:
-                return true;
-            default:
-                return false;
+    public static void ValidateKeySize(int sizeInBytes) throws Exception {
+        if (sizeInBytes != 16 || sizeInBytes != 32) {
+                throw new Exception(String.format("invalid AES key size; want 16 or 32, got %d", sizeInBytes));
         }
     }
 }

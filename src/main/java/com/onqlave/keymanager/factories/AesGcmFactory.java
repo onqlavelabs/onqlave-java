@@ -8,6 +8,8 @@ import com.onqlave.types.*;
 import com.onqlave.keymanager.keys.*;
 import com.onqlave.keymanager.primitives.*;
 
+import static com.onqlave.keymanager.primitives.AesGcmAead.ValidateKeySize;
+
 public class AesGcmFactory implements KeyFactory {
     public IDService idService;
     public CPRNGService randomService;
@@ -20,59 +22,38 @@ public class AesGcmFactory implements KeyFactory {
     @Override
     public Key NewKey(KeyOperation operation) throws Exception {
         KeyFormat format = operation.GetFormat();
-        if (this.validateKeyFormat(format)) {
-            throw new SecurityException("aesGcmKeyFactory: invalid key format.");
-        }
-
+        ValidateKeyFormat(format);
         byte[] keyData = this.randomService.GetRandomBytes(format.Size());
-        return new AesGcmKey(
-                this.idService.NewKeyID(), operation, new AesGcmKeyData(
-                keyData, KeyMaterialType.KeyMaterialSYMMETRIC, 0));
+        return new AesGcmKey(this.idService.NewKeyID(), operation, new AesGcmKeyData(keyData, KeyMaterialType.KeyMaterialSYMMETRIC, 0));
     }
 
     @Override
     public Key NewKeyFromData(KeyOperation operation, byte[] keyData) throws Exception {
         KeyFormat format = operation.GetFormat();
-        if (!this.validateKeyFormat(format)) {
-            throw new Exception("aesGcmKeyFactory: invalid key format.");
-        }
-
-        return new AesGcmKey(this.idService.NewKeyID(), operation,
-                new AesGcmKeyData(keyData, KeyMaterialType.KeyMaterialSYMMETRIC, 0));
+        ValidateKeyFormat(format);
+        return new AesGcmKey(this.idService.NewKeyID(), operation, new AesGcmKeyData(keyData, KeyMaterialType.KeyMaterialSYMMETRIC, 0));
     }
 
     @Override
     public AEAD Primitive(Key key) throws Exception {
-        if (!this.validateKey(key)) {
-            throw new Exception("aesGcmKeyFactory: invalid key.");
-        }
+        ValidateKey(key);
         return new AesGcmAead(key, this.randomService);
     }
 
-    private boolean validateKey(Key key) {
+    private static void ValidateKey(Key key) throws Exception {
         KeyData keyData = key.Data();
-        if (!this.validateKeyVersion(keyData.GetVersion(), Aes128GcmOperation.AES128_GCM_KEY_VERSION)) {
-            return false;
-        }
-
-        if (!AesGcmAead.ValidateKeySize(keyData.GetValue().length)) {
-            return false;
-        }
-
-        return true;
+        ValidateKeyVersion(keyData.GetVersion(), Aes128GcmOperation.AES128_GCM_KEY_VERSION);
+        ValidateKeySize(keyData.GetValue().length);
     }
 
-    private boolean validateKeyFormat(KeyFormat format) {
-        if (!AesGcmAead.ValidateKeySize(format.Size())) {
-            return false;
-        }
-        return true;
+    private static void ValidateKeyFormat(KeyFormat format) throws Exception {
+        ValidateKeySize(format.Size());
     }
 
-    private boolean validateKeyVersion(int version, int maxExpected) {
+
+    private static void ValidateKeyVersion(int version, int maxExpected) throws Exception {
         if (version > maxExpected) {
-            return false;
+            throw new Exception(String.format("key has version %d; only keys with version in range [0..%d] are supported", version, maxExpected));
         }
-        return true;
     }
 }

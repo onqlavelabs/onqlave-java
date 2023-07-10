@@ -8,6 +8,8 @@ import com.onqlave.service.CPRNGService;
 import com.onqlave.service.IDService;
 import com.onqlave.types.*;
 
+import static com.onqlave.utils.Constants.XChaCha20Poly1305KeySize;
+
 public class Xchacha20Poly1305Factory implements KeyFactory {
     public IDService idService;
     public CPRNGService randomService;
@@ -20,65 +22,44 @@ public class Xchacha20Poly1305Factory implements KeyFactory {
     @Override
     public Key NewKey(KeyOperation operation) throws Exception {
         KeyFormat format = operation.GetFormat();
-        if (this.ValidateKeyFormat(format)) {
-            throw new Exception("aesGcmKeyFactory: invalid key format.");
-        }
-
+        ValidateKeyFormat(format);
         byte[] keyData = this.randomService.GetRandomBytes(format.Size());
-        return new Xchacha20Poly1350Key(this.idService.NewKeyID(), operation,
-                new Xchacha20Poly1350KeyData(keyData, KeyMaterialType.KeyMaterialSYMMETRIC, 0));
+        return new Xchacha20Poly1350Key(this.idService.NewKeyID(), operation, new Xchacha20Poly1350KeyData(keyData, KeyMaterialType.KeyMaterialSYMMETRIC, 0));
     }
 
     @Override
     public Key NewKeyFromData(KeyOperation operation, byte[] keyData) throws Exception {
         KeyFormat format = operation.GetFormat();
-        if (this.ValidateKeyFormat(format)) {
-            throw new Exception("aesGcmKeyFactory: invalid key format.");
-        }
-        return new Xchacha20Poly1350Key(this.idService.NewKeyID(), operation,
-                new Xchacha20Poly1350KeyData(keyData, KeyMaterialType.KeyMaterialSYMMETRIC, 0));
+        ValidateKeyFormat(format);
+        return new Xchacha20Poly1350Key(this.idService.NewKeyID(), operation, new Xchacha20Poly1350KeyData(keyData, KeyMaterialType.KeyMaterialSYMMETRIC, 0));
     }
 
     @Override
     public AEAD Primitive(Key key) throws Exception {
-        if (this.ValidateKey(key)) {
-            return null;
-        }
-        return new Xchacha20Poly1305Aead(this.randomService, key,true);
+        ValidateKey(key);
+        return new Xchacha20Poly1305Aead(this.randomService, key, true);
     }
 
-    private boolean ValidateKey(Key key) throws Exception {
-        if (this.ValidateKeyVersion(key.Data().GetVersion(), Xchacha20Poly1305Operation.XCHACHA20_POLY1305_VERSION)) {
-            return false;
-        }
-
+    private static void ValidateKey(Key key) throws Exception {
+        ValidateKeyVersion(key.Data().GetVersion(), Xchacha20Poly1305Operation.XCHACHA20_POLY1305_VERSION);
         byte[] value = key.Data().GetValue();
-
-        if (this.ValidateXChaChaKeySize(value.length)) {
-            return false;
-        }
-
-        return true;
+        ValidateXChaChaKeySize(value.length);
     }
 
-    private boolean ValidateKeyFormat(KeyFormat format) {
-        if (this.ValidateXChaChaKeySize(format.Size())) {
-            return false;
-        }
-        return true;
+    private static void ValidateKeyFormat(KeyFormat format) throws Exception {
+        ValidateXChaChaKeySize(format.Size());
     }
 
-    private boolean ValidateKeyVersion(int version, int maxExpected) {
+
+    private static void ValidateKeyVersion(int version, int maxExpected) throws Exception {
         if (version > maxExpected) {
-            return false;
+            throw new Exception(String.format("key has version %d; only keys with version in range [0..%d] are supported", version, maxExpected));
         }
-        return true;
     }
 
-    private boolean ValidateXChaChaKeySize(int sizeInBytes) {
-        if (sizeInBytes != 32) {
-            return false;
+    private static void ValidateXChaChaKeySize(int sizeInBytes) throws Exception {
+        if (sizeInBytes != XChaCha20Poly1305KeySize) {
+            throw new Exception(String.format("invalid XChaCha key size; want %d , got %d", XChaCha20Poly1305KeySize, sizeInBytes));
         }
-        return true;
     }
 }

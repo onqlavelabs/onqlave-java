@@ -70,7 +70,6 @@ public class KeyManagerImpl implements KeyManager {
 
         try {
             byte[] data = this.keyManager.Post(ENCRYPT_RESOURCE_URL, request);
-            System.out.println(new String(data, StandardCharsets.UTF_8));
             EncryptionOpenResponse response = new Gson().fromJson(new String(data, StandardCharsets.UTF_8), EncryptionOpenResponse.class);
 
             byte[] edk = response.getDK().getEncryptedDataKey();

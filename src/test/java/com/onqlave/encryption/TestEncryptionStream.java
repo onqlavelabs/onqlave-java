@@ -36,7 +36,7 @@
 //        ByteArrayOutputStream plainStream = new ByteArrayOutputStream();
 //
 //        try {
-//            enc.DecryptStream(plainStream, dataEncrypted, new byte[0]);
+//            enc.DecryptStream(dataEncrypted,plainStream, new byte[0]);
 //            String finalString = new String(plainStream.toByteArray());
 //            System.out.println(finalString);
 //        } catch (Exception e) {

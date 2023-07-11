@@ -67,7 +67,7 @@ public class Example {
         ByteArrayOutputStream decryptPlainStream = new ByteArrayOutputStream();
 
         try {
-            enc.DecryptStream(decryptPlainStream, dataEncrypted, new byte[0]);
+            enc.DecryptStream(dataEncrypted,decryptPlainStream, new byte[0]);
         } catch (Exception e) {
             System.out.println(RED_BOLD + "Decrypted DataStructure EXCEPTION: " + e.getMessage() + RESET);
         }

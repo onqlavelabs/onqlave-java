@@ -163,7 +163,7 @@ public class Encryption {
         LOGGER.debug(String.format("[onqlave] SDK: %s - Encrypted plain data: operation took %s", operation, duration));
     }
 
-    public void DecryptStream(OutputStream plainStream, InputStream cipherStream, byte[] associatedData) throws Exception {
+    public void DecryptStream(InputStream cipherStream,OutputStream plainStream, byte[] associatedData) throws Exception {
         String operation = "DecryptStream";
         Instant start = Instant.now();
         LOGGER.debug(String.format("[onqlave] SDK: %s - Decrypting cipher data", operation));

@@ -130,7 +130,7 @@ public class Encryption {
         LOGGER.debug(String.format("[onqlave] SDK: %s - Decrypted cipher data: operation took %s", operation, duration));
         return primitive.Decrypt(cipher, associateData);
     }
-
+    @Deprecated
     public void EncryptStream(InputStream plainStream, OutputStream cipherStream, byte[] associatedData) throws Exception {
         String operation = "EncryptStream";
         Instant start = Instant.now();
@@ -162,7 +162,7 @@ public class Encryption {
         String duration = DurationFormatter.DurationBetween(start, Instant.now());
         LOGGER.debug(String.format("[onqlave] SDK: %s - Encrypted plain data: operation took %s", operation, duration));
     }
-
+    @Deprecated
     public void DecryptStream(InputStream cipherStream,OutputStream plainStream, byte[] associatedData) throws Exception {
         String operation = "DecryptStream";
         Instant start = Instant.now();

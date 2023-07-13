@@ -39,18 +39,19 @@ public class Example {
         Encryption enc = new Encryption(credential, retry, dotenv.get("ARX_URL"), Boolean.parseBoolean(dotenv.get("DEBUG")));
 
         String plainText = "This is a plain text string";
+        String associatedData = "this data needs to be authenticated, but not encrypted";
 
         System.out.println(GREEN_BOLD + "=======================START ENCRYPTION ==========================" + RESET);
         byte[] cipherData = null;
         try {
-            cipherData = enc.Encrypt(plainText.getBytes(), new byte[0]);
+            cipherData = enc.Encrypt(plainText.getBytes(), associatedData.getBytes());
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
 
         byte[] decrypted = null;
         try {
-            decrypted = enc.Decrypt(cipherData, new byte[0]);
+            decrypted = enc.Decrypt(cipherData, associatedData.getBytes());
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -62,7 +63,7 @@ public class Example {
         InputStream encryptPlainStream = new ByteArrayInputStream(plainText.getBytes());
         ByteArrayOutputStream encryptCipherStream = new ByteArrayOutputStream();
         try {
-            enc.EncryptStream(encryptPlainStream, encryptCipherStream, new byte[0]);
+            enc.EncryptStream(encryptPlainStream, encryptCipherStream, associatedData.getBytes());
         } catch (Exception e) {
             System.out.println(RED_BOLD + "Encrypted DataStructure EXCEPTION: " + e.getMessage() + RESET);
         }
@@ -71,7 +72,7 @@ public class Example {
         ByteArrayOutputStream decryptPlainStream = new ByteArrayOutputStream();
 
         try {
-            enc.DecryptStream(dataEncrypted,decryptPlainStream, new byte[0]);
+            enc.DecryptStream(dataEncrypted,decryptPlainStream,associatedData.getBytes());
         } catch (Exception e) {
             System.out.println(RED_BOLD + "Decrypted DataStructure EXCEPTION: " + e.getMessage() + RESET);
         }

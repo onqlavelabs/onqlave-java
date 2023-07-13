@@ -73,30 +73,32 @@ public class Main {
 ```
 All Onqlave APIs must be invoked using a `Encryption` instance.
 ### Encrypt
-To encrypt data, use the **Encrypt(byte[] planData, byte[] associateData)** method of the Encryption service. The plainText parameter is the `byte[]` representation of data you are wishing to encrypt. The associatedData parameter the `byte[]` representation of associated data which can be used to improve the authenticity of the data (it is not mandatory), as shown below.
+To encrypt data, use the **Encrypt(byte[] planData, byte[] associatedData)** method of the Encryption service. The plainText parameter is the `byte[]` representation of data you are wishing to encrypt. The associatedData parameter the `byte[]` representation of associated data which can be used to improve the authenticity of the data (it is not mandatory), as shown below.
 
 Encryption call:
 ```java
     Encryption serivce = new Encryption(credential, retry, "<arx_url>", true);
     String plainText = "This is a plain text string";
+    String associatedData = "this data needs to be authenticated, but not encrypted";
     byte[] cipherData = null;
     try {
-        cipherData = serivce.Encrypt(plainText.getBytes(), new byte[0]);
+        cipherData = serivce.Encrypt(plainText.getBytes(), associatedData.getBytes());
     } catch (Exception e) {
         //TODO: handle exception here.
         System.out.println(e.getMessage());
     }
 ```
 ### Decrypt
-To encrypt data, use the **Decrypt(byte[] cipherText, byte[] associateData)** method of the `Encryption` service. The **cipherData** parameter is the `byte[]` representation of data you are wishing to decrypt (previously encrypted). The **associatedData** parameter the `byte[]` representation of associated data which can be used to improve the authenticity of the data (it is not mandatory), as shown below.
+To encrypt data, use the **Decrypt(byte[] cipherText, byte[] associatedData)** method of the `Encryption` service. The **cipherData** parameter is the `byte[]` representation of data you are wishing to decrypt (previously encrypted). The **associatedData** parameter the `byte[]` representation of associated data which can be used to improve the authenticity of the data (it is not mandatory), as shown below.
 
 Decryption call:
 ```java
     Encryption serivce = new Encryption(credential, retry, "<arx_url>", true);
     String plainText = "This is cipher data is already encrypted using `Encrypt` method";
+    String associatedData = "this data needs to be authenticated, but not encrypted";
     byte[] cipherData = null;
     try {
-        cipherData = serivce.Decrypt(plainText.getBytes(), new byte[0]);
+        cipherData = serivce.Decrypt(plainText.getBytes(),associatedData.getBytes());
     } catch (Exception e) {
         //TODO: handle exception here.
         System.out.println(e.getMessage());
@@ -107,10 +109,12 @@ Decryption call:
 To encrypt stream of data, use the **EncryptStream(InputStream plainStream, OutputStream cipherStream, byte[] associatedData)** method of the `Encryption` service. The **plainStream** parameter is the `InputStream` stream of data you are wishing to encrypt. The **cipherStream** parameter is the `OutputStream` stream you are wishing to write the cipher data to. The **associatedData** parameter the `byte[]` representation of associated data which can be used to improve the authenticity of the data (it is not mandatory), as shown below.
 ```java
     Encryption serivce = new Encryption(credential, retry, "<arx_url>", true);
+    String plainText = "This is cipher data is already encrypted using `Encrypt` method";
+    String associatedData = "this data needs to be authenticated, but not encrypted";
     InputStream encryptPlainStream = new ByteArrayInputStream(plainText.getBytes());
     ByteArrayOutputStream encryptCipherStream = new ByteArrayOutputStream();
     try {
-        service.EncryptStream(encryptPlainStream, encryptCipherStream, new byte[0]);
+        service.EncryptStream(encryptPlainStream, encryptCipherStream, associatedData.getBytes());
     } catch (Exception e) {
         //TODO: handle exception here.
         System.out.println(e.getMessage());
@@ -119,12 +123,13 @@ To encrypt stream of data, use the **EncryptStream(InputStream plainStream, Outp
 ### Decrypt Stream
 To decrypt data, use the **DecryptStream(InputStream cipherStream,OutputStream plainStream, byte[] associatedData)** method of the `Encryption` service. The **cipherStream** parameter is the `InputStream` stream of data you are wishing to decrypt and it was originally encrypted using [EncryptStream](#encrypt-stream). The **plainStream** parameter is the `OutputStream` stream you are wishing to write the plain data back to. The **associatedData** parameter the `byte[]` representation of associated data which can be used to improve the authenticity of the data (it is not mandatory), as shown below.
 ```java
+    String plainText = "This is cipher data is already encrypted using `Encrypt` method";
     Encryption serivce = new Encryption(credential, retry, "<arx_url>", true);
     ByteArrayInputStream dataEncrypted = new ByteArrayInputStream(encryptCipherStream.toByteArray());
     ByteArrayOutputStream decryptPlainStream = new ByteArrayOutputStream();
 
     try {
-        enc.DecryptStream(dataEncrypted,decryptPlainStream, new byte[0]);
+        serivce.DecryptStream(dataEncrypted,decryptPlainStream, associatedData.getBytes());
     } catch (Exception e) {
         //TODO: handle exception here.
         System.out.println(e.getMessage());

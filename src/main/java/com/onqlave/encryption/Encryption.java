@@ -93,14 +93,14 @@ public class Encryption {
         }
     }
 
-    public byte[] Encrypt(byte[] planData, byte[] associateData) throws Exception {
+    public byte[] Encrypt(byte[] planData, byte[] associatedData) throws Exception {
         String operation = "Encrypt";
         Instant start = Instant.now();
         LOGGER.debug(String.format("[onqlave] SDK: %s - Encrypting plain data", operation));
         EncryptOperation eo = this.initEncryptOperation(operation);
         AlgorithmSeriliser header = eo.getSeriliser();
         AEAD primitive = eo.getMethod();
-        byte[] cipherData = primitive.Encrypt(planData, associateData);
+        byte[] cipherData = primitive.Encrypt(planData, associatedData);
         ByteArrayOutputStream cipherStream = new ByteArrayOutputStream();
         PlainStreamProcessor processor = new PlainStreamProcessorImpl(cipherStream);
         processor.WriteHeader(header);
@@ -110,7 +110,7 @@ public class Encryption {
         return cipherStream.toByteArray();
     }
 
-    public byte[] Decrypt(byte[] cipherData, byte[] associateData) throws Exception {
+    public byte[] Decrypt(byte[] cipherData, byte[] associatedData) throws Exception {
         String operation = "Decrypt";
         Instant start = Instant.now();
         LOGGER.debug(String.format("[onqlave] SDK: %s - Decrypting cipher data", operation));
@@ -121,7 +121,7 @@ public class Encryption {
         byte[] cipher = processor.ReadPacket();
         String duration = DurationFormatter.DurationBetween(start, Instant.now());
         LOGGER.debug(String.format("[onqlave] SDK: %s - Decrypted cipher data: operation took %s", operation, duration));
-        return primitive.Decrypt(cipher, associateData);
+        return primitive.Decrypt(cipher, associatedData);
     }
 
     @Deprecated

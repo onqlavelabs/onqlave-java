@@ -102,37 +102,7 @@ Decryption call:
         System.out.println(e.getMessage());
     }
 ```
-### Encrypt Struct
-To encrypt struct of data, use the **EncryptStructure(Map<String, Object> plainStructure, byte[] associatedData)** method of the `Encryption` service. The **plainStruct** parameter is the `Map<String, Object>` of data you are wishing to encrypt.The **associatedData** parameter the `byte[]` representation of associated data which can be used to improve the authenticity of the data (it is not mandatory), as shown below.
-```java
-    Encryption serivce = new Encryption(credential, retry, "<arx_url>", true);
-    Map<String, Object> plainStructure = new HashMap<String, Object>() {{
-            put("id", 1);
-            put("name", "C");
-            put("major", "Software Developer");
-        }};
 
-    OnqlaveStructure encryptedData = null;
-    try {
-        encryptedData = serivce.EncryptStructure(plainStructure, new byte[0]);
-    } catch (Exception e) {
-        //TODO: handle exception here.
-        System.out.println(e.getMessage());
-    }
-```
-
-### Decrypt Struct
-To decrypt struct of data, use the **DecryptStructure(OnqlaveStructure cipherStructure, byte[] associatedData)** method of the `Encryption` service. The **cipherStructure** parameter is the `OnqlaveStruct` of data you are wishing to decrypt and it was originally encrypted using [EncryptedStruct](#encrypt-struct).The **associatedData** parameter the `byte[]` representation of associated data which can be used to improve the authenticity of the data (it is not mandatory), as shown below.
-```java
-    Encryption serivce = new Encryption(credential, retry, "<arx_url>", true);
-    Map<String, Object> decryptedData = null;
-    try {
-        decryptedData = service.DecryptStructure(encryptedData, new byte[0]);
-    } catch (Exception e) {
-        //TODO: handle exception here.
-        System.out.println(e.getMessage());
-    }
-```
 ### Encrypt Stream
 To encrypt stream of data, use the **EncryptStream(InputStream plainStream, OutputStream cipherStream, byte[] associatedData)** method of the `Encryption` service. The **plainStream** parameter is the `InputStream` stream of data you are wishing to encrypt. The **cipherStream** parameter is the `OutputStream` stream you are wishing to write the cipher data to. The **associatedData** parameter the `byte[]` representation of associated data which can be used to improve the authenticity of the data (it is not mandatory), as shown below.
 ```java

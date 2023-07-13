@@ -1,8 +1,6 @@
 package com.onqlave.encryption;
 
-import com.onqlave.contract.Configuration;
-import com.onqlave.contract.Credential;
-import com.onqlave.contract.RetrySettings;
+import com.onqlave.contract.*;
 import com.onqlave.keymanager.KeyManager;
 import com.onqlave.keymanager.KeyManagerImpl;
 import com.onqlave.keymanager.factories.AesGcmFactory;
@@ -64,22 +62,21 @@ public class Encryption {
         this.keyManager = null;
     }
 
-    private Pair<AlgorithmSeriliser, AEAD> initEncryptOperation(String operation) throws Exception {
+    private EncryptOperation initEncryptOperation(String operation) throws Exception {
         try {
-            Triplet<byte[], byte[], String> trip = this.keyManager.FetchEncryptionKey();
+            EncryptionKey ek = this.keyManager.FetchEncryptionKey();
 
-            byte[] edk = trip.getValue0();
-            byte[] dk = trip.getValue1();
-            String algo = trip.getValue2();
+            byte[] edk = ek.getB64EDK();
+            byte[] dk = ek.getB4DK();
+            String algo = ek.getAlgorithm();
 
             KeyOperation ops = this.operations.get(algo);
             KeyFactory factory = ops.GetFactory();
             Key key = factory.NewKeyFromData(ops, dk);
             AEAD primitive = factory.Primitive(key);
-
             AlgorithmSeriliser algorithm = new Algorithm(0, algo, edk);
-            Pair<AlgorithmSeriliser, AEAD> result = new Pair<AlgorithmSeriliser, AEAD>(algorithm, primitive);
-            return result;
+
+            return new EncryptOperation(algorithm, primitive);
         } catch (Exception e) {
             LOGGER.error(String.format("[onqlave] SDK: %s - Failed encrypting plain data", operation));
             throw e;
@@ -104,9 +101,9 @@ public class Encryption {
         String operation = "Encrypt";
         Instant start = Instant.now();
         LOGGER.debug(String.format("[onqlave] SDK: %s - Encrypting plain data", operation));
-        Pair<AlgorithmSeriliser, AEAD> result = this.initEncryptOperation(operation);
-        AlgorithmSeriliser header = result.getValue0();
-        AEAD primitive = result.getValue1();
+        EncryptOperation eo = this.initEncryptOperation(operation);
+        AlgorithmSeriliser header = eo.getSeriliser();
+        AEAD primitive = eo.getMethod();
         byte[] cipherData = primitive.Encrypt(planData, associateData);
         ByteArrayOutputStream cipherStream = new ByteArrayOutputStream();
         PlainStreamProcessor processor = new PlainStreamProcessorImpl(cipherStream);
@@ -135,9 +132,9 @@ public class Encryption {
         String operation = "EncryptStream";
         Instant start = Instant.now();
         LOGGER.debug(String.format("[onqlave] SDK: %s - Encrypting plain data", operation));
-        Pair<AlgorithmSeriliser, AEAD> result = this.initEncryptOperation(operation);
-        AlgorithmSeriliser header = result.getValue0();
-        AEAD primitive = result.getValue1();
+        EncryptOperation eo = this.initEncryptOperation(operation);
+        AlgorithmSeriliser header = eo.getSeriliser();
+        AEAD primitive = eo.getMethod();
         PlainStreamProcessor processor = new PlainStreamProcessorImpl(cipherStream);
         processor.WriteHeader(header);
 
@@ -194,9 +191,9 @@ public class Encryption {
         Instant start = Instant.now();
         LOGGER.debug(String.format("[onqlave] SDK: %s - Encrypting plain data", operation));
 
-        Pair<AlgorithmSeriliser, AEAD> tup = this.initEncryptOperation(operation);
-        AlgorithmSeriliser algo = tup.getValue0();
-        AEAD primitive = tup.getValue1();
+        EncryptOperation eo = this.initEncryptOperation(operation);
+        AlgorithmSeriliser algo = eo.getSeriliser();
+        AEAD primitive = eo.getMethod();
         byte[] header = algo.Serialise();
         Map<String, byte[]> result = new HashMap<>();
         TypeResolver resolver = new TypeResolverImpl();

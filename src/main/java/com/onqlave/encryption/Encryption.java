@@ -14,18 +14,13 @@ import com.onqlave.service.IDService;
 import com.onqlave.service.IDServiceImpl;
 import com.onqlave.types.*;
 import com.onqlave.utils.DurationFormatter;
-
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.bouncycastle.util.Arrays;
-import org.javatuples.Pair;
-import org.javatuples.Triplet;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.HashMap;
@@ -37,6 +32,7 @@ public class Encryption {
     private static final Logger LOGGER = LogManager.getLogger();
 
     public Encryption(Credential credential, RetrySettings retrySettings, String ArxURL, Boolean debug) {
+        enableDebugLevel(debug);
         Configuration configuration = new Configuration(credential, retrySettings, ArxURL, debug);
         CPRNGService randomService;
         try {
@@ -127,6 +123,7 @@ public class Encryption {
         LOGGER.debug(String.format("[onqlave] SDK: %s - Decrypted cipher data: operation took %s", operation, duration));
         return primitive.Decrypt(cipher, associateData);
     }
+
     @Deprecated
     public void EncryptStream(InputStream plainStream, OutputStream cipherStream, byte[] associatedData) throws Exception {
         String operation = "EncryptStream";
@@ -159,8 +156,9 @@ public class Encryption {
         String duration = DurationFormatter.DurationBetween(start, Instant.now());
         LOGGER.debug(String.format("[onqlave] SDK: %s - Encrypted plain data: operation took %s", operation, duration));
     }
+
     @Deprecated
-    public void DecryptStream(InputStream cipherStream,OutputStream plainStream, byte[] associatedData) throws Exception {
+    public void DecryptStream(InputStream cipherStream, OutputStream plainStream, byte[] associatedData) throws Exception {
         String operation = "DecryptStream";
         Instant start = Instant.now();
         LOGGER.debug(String.format("[onqlave] SDK: %s - Decrypting cipher data", operation));
@@ -228,5 +226,13 @@ public class Encryption {
         String duration = DurationFormatter.DurationBetween(start, Instant.now());
         LOGGER.debug(String.format("[onqlave] SDK: %s - Decrypted cipher data: operation took %s", operation, duration));
         return result;
+    }
+
+    public void enableDebugLevel(Boolean debug) {
+        if (debug) {
+            Configurator.setRootLevel(Level.TRACE);
+        } else {
+            Configurator.setRootLevel(Level.ERROR);
+        }
     }
 }

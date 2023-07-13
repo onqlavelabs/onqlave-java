@@ -5,6 +5,10 @@ import com.onqlave.contract.RetrySettings;
 import com.onqlave.encryption.Encryption;
 import com.onqlave.types.OnqlaveStructure;
 import io.github.cdimascio.dotenv.Dotenv;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -32,7 +36,7 @@ public class Example {
                 Duration.ofSeconds(Integer.parseInt(dotenv.get("WAIT_TIME"))),
                 Duration.ofSeconds(Integer.parseInt(dotenv.get("MAX_WAIT_TIME"))));
 
-        Encryption enc = new Encryption(credential, retry, dotenv.get("ARX_URL"), true);
+        Encryption enc = new Encryption(credential, retry, dotenv.get("ARX_URL"), Boolean.parseBoolean(dotenv.get("DEBUG")));
 
         String plainText = "This is a plain text string";
 

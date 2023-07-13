@@ -6,6 +6,7 @@ import com.onqlave.connection.ClientImpl;
 import com.onqlave.connection.Connection;
 import com.onqlave.connection.ConnectionImpl;
 import com.onqlave.contract.Configuration;
+import com.onqlave.contract.EncryptionKey;
 import com.onqlave.contract.request.DecryptionOpenRequest;
 import com.onqlave.contract.request.EncryptionOpenRequest;
 import com.onqlave.contract.response.DecryptionOpenResponse;
@@ -60,14 +61,12 @@ public class KeyManagerImpl implements KeyManager {
     }
 
     @Override
-    public Triplet<byte[], byte[], String> FetchEncryptionKey() throws Exception {
+    public EncryptionKey FetchEncryptionKey() throws Exception {
         String operation = "FetchEncryptionKey";
         Instant start = Instant.now();
         LOGGER.debug(String.format("[onqlave] SDK: %s - Fetching encryption key", operation));
 
         EncryptionOpenRequest request = new EncryptionOpenRequest();
-        Triplet<byte[], byte[], String> trip;
-
         try {
             byte[] data = this.keyManager.Post(ENCRYPT_RESOURCE_URL, request);
             EncryptionOpenResponse response = new Gson().fromJson(new String(data, StandardCharsets.UTF_8), EncryptionOpenResponse.class);
@@ -79,15 +78,15 @@ public class KeyManagerImpl implements KeyManager {
             String wrappingAlgo = response.getSecurityModel().getWrappingAlgorithm();
             String algo = response.getSecurityModel().getAlgorithm();
             byte[] dk = this.UnwrapKey(wrappingAlgo, operation, wdk, epk, fp, this.configuration.getCredential().getSecretKey().getBytes());
-            trip = Triplet.with(edk, dk, algo);
+
+            String duration = DurationFormatter.DurationBetween(start, Instant.now());
+            LOGGER.debug(String.format("[onqlave] SDK: %s - Fetched encryption key: operation took %s", operation, duration));
+
+            return new EncryptionKey(edk, dk, algo);
         } catch (Exception e) {
             LOGGER.error(String.format("[onqlave] SDK: %s - Failed fetching encryption key", operation));
             throw new OnqlaveError(SdkErrorCode, e.getMessage(), null);
         }
-
-        String duration = DurationFormatter.DurationBetween(start, Instant.now());
-        LOGGER.debug(String.format("[onqlave] SDK: %s - Fetched encryption key: operation took %s", operation, duration));
-        return trip;
     }
 
     @Override
@@ -97,7 +96,7 @@ public class KeyManagerImpl implements KeyManager {
         LOGGER.debug(String.format("[onqlave] SDK: %s - Fetching decryption key", operation));
 
         DecryptionOpenRequest request = new DecryptionOpenRequest(new String(edk));
-        byte[] dk;
+
         try {
             byte[] data = this.keyManager.Post(DECRYPT_RESOURCE_URL, request);
             DecryptionOpenResponse response = new Gson().fromJson(new String(data), DecryptionOpenResponse.class);
@@ -105,15 +104,18 @@ public class KeyManagerImpl implements KeyManager {
             byte[] epk = response.getWK().getEncryptedPrivateKey();
             byte[] fp = response.getWK().getKeyFingerprint();
             String wrappingAlgo = response.getSecurityModel().getWrappingAlgorithm();
-            dk = this.UnwrapKey(wrappingAlgo, operation, wdk, epk, fp, this.configuration.getCredential().getSecretKey().getBytes());
+            byte[] dk = this.UnwrapKey(wrappingAlgo, operation, wdk, epk, fp, this.configuration.getCredential().getSecretKey().getBytes());
+
+            String duration = DurationFormatter.DurationBetween(start, Instant.now());
+            LOGGER.debug(String.format("[onqlave] SDK: %s - Fetched decryption key: operation took %s", operation, duration));
+
+            return dk;
         } catch (Exception e) {
             LOGGER.error(String.format("[onqlave] SDK: %s - Failed fetching decryption key", operation));
             throw new OnqlaveError(ErrorCodes.SdkErrorCode, e.getMessage(), null);
         }
 
-        String duration = DurationFormatter.DurationBetween(start, Instant.now());
-        LOGGER.debug(String.format("[onqlave] SDK: %s - Fetched decryption key: operation took %s", operation, duration));
-        return dk;
+
     }
 
     private byte[] UnwrapKey(String algo, String operation, byte[] wdk, byte[] epk, byte[] fp, byte[] password) throws Exception {

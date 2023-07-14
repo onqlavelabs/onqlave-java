@@ -124,7 +124,6 @@ public class Encryption {
         return primitive.Decrypt(cipher, associatedData);
     }
 
-    @Deprecated
     public void EncryptStream(InputStream plainStream, OutputStream cipherStream, byte[] associatedData) throws Exception {
         String operation = "EncryptStream";
         Instant start = Instant.now();
@@ -157,7 +156,6 @@ public class Encryption {
         LOGGER.debug(String.format("[onqlave] SDK: %s - Encrypted plain data: operation took %s", operation, duration));
     }
 
-    @Deprecated
     public void DecryptStream(InputStream cipherStream, OutputStream plainStream, byte[] associatedData) throws Exception {
         String operation = "DecryptStream";
         Instant start = Instant.now();
@@ -182,50 +180,6 @@ public class Encryption {
 
         String duration = DurationFormatter.DurationBetween(start, Instant.now());
         LOGGER.debug(String.format("[onqlave] SDK: %s - Decrypted cipher data: operation took %s", operation, duration));
-    }
-
-    public OnqlaveStructure EncryptStructure(Map<String, Object> plainStructure, byte[] associatedData) throws Exception {
-        String operation = "EncryptStructure";
-        Instant start = Instant.now();
-        LOGGER.debug(String.format("[onqlave] SDK: %s - Encrypting plain data", operation));
-
-        EncryptOperation eo = this.initEncryptOperation(operation);
-        AlgorithmSeriliser algo = eo.getSeriliser();
-        AEAD primitive = eo.getMethod();
-        byte[] header = algo.Serialise();
-        Map<String, byte[]> result = new HashMap<>();
-        TypeResolver resolver = new TypeResolverImpl();
-        for (Map.Entry<String, Object> e : plainStructure.entrySet()) {
-            byte[] plainData = resolver.Serialise(e.getKey(), e.getValue());
-            byte[] cipherData = primitive.Encrypt(plainData, associatedData);
-            result.put(e.getKey(), cipherData);
-        }
-
-        String duration = DurationFormatter.DurationBetween(start, Instant.now());
-        LOGGER.debug(String.format("[onqlave] SDK: %s - Encrypted plain data: operation took %s", operation, duration));
-        return new OnqlaveStructure(header, result);
-    }
-
-    public Map<String, Object> DecryptStructure(OnqlaveStructure cipherStructure, byte[] associatedData) throws Exception {
-        String operation = "EncryptStructure";
-        Instant start = Instant.now();
-        LOGGER.debug(String.format("[onqlave] SDK: %s - Decrypting cipher data", operation));
-
-        InputStream cipherStream = new ByteArrayInputStream(cipherStructure.getEdk());
-        EncryptedStreamProcessor processor = new EncryptedStreamProcessorImpl(cipherStream);
-        AlgorithmDeserialiser algo = processor.ReadHeader();
-        AEAD primitive = this.initDecryptOperation(operation, algo);
-        TypeResolver resolver = new TypeResolverImpl();
-        Map<String, Object> result = new HashMap<String, Object>();
-        for (Map.Entry<String, byte[]> e : cipherStructure.getEmbedded().entrySet()) {
-            byte[] plainData = primitive.Decrypt(e.getValue(), associatedData);
-            Object plainValue = resolver.Deserialise(e.getKey(), plainData);
-            result.put(e.getKey(), plainValue);
-        }
-
-        String duration = DurationFormatter.DurationBetween(start, Instant.now());
-        LOGGER.debug(String.format("[onqlave] SDK: %s - Decrypted cipher data: operation took %s", operation, duration));
-        return result;
     }
 
     public void enableDebugLevel(Boolean debug) {

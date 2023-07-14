@@ -89,7 +89,7 @@ Encryption call:
     }
 ```
 ### Decrypt
-To encrypt data, use the **Decrypt(byte[] cipherText, byte[] associatedData)** method of the `Encryption` service. The **cipherData** parameter is the `byte[]` representation of data you are wishing to decrypt (previously encrypted). The **associatedData** parameter the `byte[]` representation of associated data which can be used to improve the authenticity of the data (it is not mandatory), as shown below.
+To decrypt data, use the **Decrypt(byte[] cipherText, byte[] associatedData)** method of the `Encryption` service. The **cipherData** parameter is the `byte[]` representation of data you are wishing to decrypt (previously encrypted). The **associatedData** parameter the `byte[]` representation of associated data which can be used to improve the authenticity of the data (it is not mandatory), as shown below.
 
 Decryption call:
 ```java
@@ -121,7 +121,7 @@ To encrypt stream of data, use the **EncryptStream(InputStream plainStream, Outp
     }
 ```
 ### Decrypt Stream
-To decrypt data, use the **DecryptStream(InputStream cipherStream,OutputStream plainStream, byte[] associatedData)** method of the `Encryption` service. The **cipherStream** parameter is the `InputStream` stream of data you are wishing to decrypt and it was originally encrypted using [EncryptStream](#encrypt-stream). The **plainStream** parameter is the `OutputStream` stream you are wishing to write the plain data back to. The **associatedData** parameter the `byte[]` representation of associated data which can be used to improve the authenticity of the data (it is not mandatory), as shown below.
+To decrypt stream of data, use the **DecryptStream(InputStream cipherStream,OutputStream plainStream, byte[] associatedData)** method of the `Encryption` service. The **cipherStream** parameter is the `InputStream` stream of data you are wishing to decrypt and it was originally encrypted using [EncryptStream](#encrypt-stream). The **plainStream** parameter is the `OutputStream` stream you are wishing to write the plain data back to. The **associatedData** parameter the `byte[]` representation of associated data which can be used to improve the authenticity of the data (it is not mandatory), as shown below.
 ```java
     String plainText = "This is cipher data is already encrypted using `Encrypt` method";
     Encryption serivce = new Encryption(credential, retry, "<arx_url>", true);

@@ -28,7 +28,6 @@ public class Example {
     public static final String YELLOW_BOLD = "\u001B[33;1m";
 
     public static void main(String args[]) {
-
         Dotenv dotenv = Dotenv.load();
         Credential credential = new Credential(dotenv.get("ACCESS_KEY"), dotenv.get("SIGNING_KEY"), dotenv.get("SECRET_KEY"));
 
@@ -36,7 +35,7 @@ public class Example {
                 Duration.ofSeconds(Integer.parseInt(dotenv.get("WAIT_TIME"))),
                 Duration.ofSeconds(Integer.parseInt(dotenv.get("MAX_WAIT_TIME"))));
 
-        Encryption enc = new Encryption(credential, retry, dotenv.get("ARX_URL"), Boolean.parseBoolean(dotenv.get("DEBUG")));
+        Encryption enc = new Encryption(credential, retry, dotenv.get("ARX_URL"),Boolean.parseBoolean(dotenv.get("DEBUG")) );
 
         String plainText = "This is a plain text string";
         String associatedData = "this data needs to be authenticated, but not encrypted";
@@ -65,7 +64,7 @@ public class Example {
         try {
             enc.EncryptStream(encryptPlainStream, encryptCipherStream, associatedData.getBytes());
         } catch (Exception e) {
-            System.out.println(RED_BOLD + "Encrypted DataStructure EXCEPTION: " + e.getMessage() + RESET);
+            System.out.println(RED_BOLD + "Encrypted Stream EXCEPTION: " + e.getMessage() + RESET);
         }
 
         ByteArrayInputStream dataEncrypted = new ByteArrayInputStream(encryptCipherStream.toByteArray());
@@ -74,33 +73,9 @@ public class Example {
         try {
             enc.DecryptStream(dataEncrypted,decryptPlainStream,associatedData.getBytes());
         } catch (Exception e) {
-            System.out.println(RED_BOLD + "Decrypted DataStructure EXCEPTION: " + e.getMessage() + RESET);
+            System.out.println(RED_BOLD + "Decrypted Stream EXCEPTION: " + e.getMessage() + RESET);
         }
         System.out.printf(YELLOW_BOLD + "Decrypt stream result: %s\n", new String(decryptPlainStream.toByteArray()) + RESET);
-        System.out.println("=======================END ENCRYPTION A STREAM ==========================\n\n\n");
-
-        System.out.println(GREEN_BOLD + "=======================START ENCRYPTION STRUCT ==========================" + RESET);
-        Map<String, Object> plainStructure = new HashMap<String, Object>() {{
-            put("id", 1);
-            put("name", "C");
-            put("major", "Software Developer");
-        }};
-
-        OnqlaveStructure encryptedData = null;
-        try {
-            encryptedData = enc.EncryptStructure(plainStructure, new byte[0]);
-        } catch (Exception e) {
-            System.out.println(RED_BOLD + "Encrypted DataStructure EXCEPTION: " + e.getMessage());
-        }
-
-        // Decryption a struct data
-        Map<String, Object> decryptedData = null;
-        try {
-            decryptedData = enc.DecryptStructure(encryptedData, new byte[0]);
-        } catch (Exception e) {
-            System.out.println(RED_BOLD + "Decrypted DataStructure EXCEPTION: " + e.getMessage() + RESET);
-        }
-        System.out.printf(YELLOW_BOLD + "Decrypt a struct result: %s\n", Arrays.asList(decryptedData) + RESET);
-        System.out.println(GREEN_BOLD + "=======================END ENCRYPTION STRUCT ==========================\n\n\n" + RESET);
+        System.out.println(GREEN_BOLD + "=======================END ENCRYPTION A STREAM ==========================\n\n\n");
     }
 }

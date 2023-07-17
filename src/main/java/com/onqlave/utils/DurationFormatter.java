@@ -4,7 +4,7 @@ import java.time.Duration;
 import java.time.Instant;
 
 public class DurationFormatter {
-    public static String DurationBetween(Instant start, Instant end) {
+    public static String durationBetween(Instant start, Instant end) {
         Duration duration = Duration.between(start, end);
         long hours = duration.toHours();
         long minutes = duration.toMinutesPart();

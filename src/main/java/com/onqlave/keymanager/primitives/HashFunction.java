@@ -6,7 +6,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class HashFunction {
-    public static MessageDigest GetHashFunc(String hash) throws NoSuchAlgorithmException {
+    public static MessageDigest getHashFunc(String hash) throws NoSuchAlgorithmException {
         return switch (hash) {
             case "SHA1" -> MessageDigest.getInstance("SHA-1");
             case "SHA224" -> MessageDigest.getInstance("SHA-224");
@@ -17,7 +17,7 @@ public class HashFunction {
         };
     }
 
-    public static String GetAlgo(HashType value) throws IllegalArgumentException {
+    public static String getAlgo(HashType value) throws IllegalArgumentException {
         return switch (value.getValue()) {
             case 0 -> "UNKNOWN_HASH";
             case 1 -> "SHA1";

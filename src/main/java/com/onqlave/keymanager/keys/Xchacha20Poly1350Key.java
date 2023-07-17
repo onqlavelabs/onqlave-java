@@ -5,10 +5,10 @@ import com.onqlave.types.KeyData;
 import com.onqlave.types.KeyOperation;
 
 public class Xchacha20Poly1350Key implements Key {
-    public KeyOperation operation;
+    private KeyOperation operation;
 
-    public Xchacha20Poly1350KeyData data;
-    public int keyID;
+    private Xchacha20Poly1350KeyData data;
+    private int keyID;
 
     public Xchacha20Poly1350Key(int keyID, KeyOperation operation, Xchacha20Poly1350KeyData data) {
         this.operation = operation;
@@ -17,17 +17,17 @@ public class Xchacha20Poly1350Key implements Key {
     }
 
     @Override
-    public int KeyID() {
+    public int keyID() {
         return 0;
     }
 
     @Override
-    public KeyOperation Operation() {
+    public KeyOperation operation() {
         return this.operation;
     }
 
     @Override
-    public KeyData Data() {
+    public KeyData data() {
         return this.data;
     }
 }

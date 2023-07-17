@@ -12,7 +12,7 @@ public class AesGcmKeyFormat implements KeyFormat {
     }
 
     @Override
-    public int Size() {
+    public int size() {
         return this.keySize;
     }
 }

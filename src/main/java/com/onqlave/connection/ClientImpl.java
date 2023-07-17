@@ -10,12 +10,11 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.time.Duration;
 import java.util.Map;
 
 public class ClientImpl implements Client {
-    private HttpClient client;
-    private RetrySettings retrySettings;
+    private final HttpClient client;
+    private final RetrySettings retrySettings;
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -25,13 +24,13 @@ public class ClientImpl implements Client {
     }
 
     @Override
-    public byte[] Post(String resource, OnqlaveRequest body, Map<String, String> header) throws Exception {
+    public byte[] post(String resource, OnqlaveRequest body, Map<String, String> header) throws Exception {
         String operation = "https";
         HttpRequest.Builder builder = HttpRequest.newBuilder();
         for (var entry : header.entrySet()) {
             builder.setHeader(entry.getKey(), entry.getValue());
         }
-        HttpRequest request = builder.uri(new URI(resource)).POST(HttpRequest.BodyPublishers.ofByteArray(body.GetContent())).build();
+        HttpRequest request = builder.uri(new URI(resource)).POST(HttpRequest.BodyPublishers.ofByteArray(body.getContent())).build();
 
         try {
             HttpResponse<byte[]> response = this.executeWithRetry(request);

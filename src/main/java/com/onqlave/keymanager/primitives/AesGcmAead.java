@@ -10,22 +10,21 @@ import java.util.Arrays;
 import static com.onqlave.utils.Constants.*;
 
 public class AesGcmAead implements AEAD {
-    private CPRNGService randomService;
-    private Key key;
-    private Boolean prependIV;
+    private final CPRNGService randomService;
+    private final Key key;
+    private final Boolean prependIV;
 
     //TODO: consider review this constructor
-    public AesGcmAead(Key key, CPRNGService randomService) throws Exception {
-        //TODO: need to review again
+    public AesGcmAead(Key key, CPRNGService randomService) {
         this.randomService = randomService;
         this.key = key;
         this.prependIV = true;
     }
 
     @Override
-    public byte[] Encrypt(byte[] plaintext, byte[] associatedData) throws Exception {
-        byte[] iv = randomService.GetRandomBytes(AES_GCM_IV_SIZE);
-        byte[] cipherText = AESAEADHelper.Encrypt(plaintext, associatedData, this.key.Data().GetValue(), iv);
+    public byte[] encrypt(byte[] plaintext, byte[] associatedData) throws Exception {
+        byte[] iv = randomService.getRandomBytes(AES_GCM_IV_SIZE);
+        byte[] cipherText = AESAEADHelper.encrypt(plaintext, associatedData, this.key.data().getValue(), iv);
         if (prependIV) {
             byte[] cipherTextWithIV = new byte[cipherText.length + iv.length];
             System.arraycopy(iv, 0, cipherTextWithIV, 0, iv.length);
@@ -36,7 +35,7 @@ public class AesGcmAead implements AEAD {
     }
 
     @Override
-    public byte[] Decrypt(byte[] cipherText, byte[] associatedData) throws Exception {
+    public byte[] decrypt(byte[] cipherText, byte[] associatedData) throws Exception {
         if (cipherText.length < AES_GCM_IV_SIZE) {
             throw new IllegalArgumentException(String.format("cipherText with size %d is too short", cipherText.length));
         }
@@ -58,10 +57,10 @@ public class AesGcmAead implements AEAD {
             actualCipherText = cipherText;
         }
 
-        return AESAEADHelper.Decrypt(actualCipherText, associatedData, this.key.Data().GetValue(), iv);
+        return AESAEADHelper.decrypt(actualCipherText, associatedData, this.key.data().getValue(), iv);
     }
 
-    public static boolean ValidateKeySize(int sizeInBytes) {
+    public static boolean validateKeySize(int sizeInBytes) {
         switch (sizeInBytes) {
             case 16, 32:
                 return true;

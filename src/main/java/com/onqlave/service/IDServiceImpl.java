@@ -10,12 +10,12 @@ public class IDServiceImpl implements IDService {
     }
 
     @Override
-    public String NewStringID() {
+    public String newStringID() {
         return UUID.randomUUID().toString();
     }
 
     @Override
-    public int NewKeyID() {
-        return randomService.GetRandomInt32Bytes();
+    public int newKeyID() {
+        return randomService.getRandomInt32Bytes();
     }
 }

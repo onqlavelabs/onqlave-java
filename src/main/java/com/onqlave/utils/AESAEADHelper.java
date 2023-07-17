@@ -14,7 +14,7 @@ import static com.onqlave.utils.Constants.*;
 public class AESAEADHelper {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public static byte[] Encrypt(byte[] plainText, byte[] associatedData, byte[] key, byte[] iv) throws SecurityException {
+    public static byte[] encrypt(byte[] plainText, byte[] associatedData, byte[] key, byte[] iv) throws SecurityException {
         try {
             SecretKey secretKey = new SecretKeySpec(key, "AES");
             Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
@@ -32,7 +32,7 @@ public class AESAEADHelper {
         }
     }
 
-    public static byte[] Decrypt(byte[] cipherText, byte[] associatedData, byte[] key, byte[] iv) throws SecurityException {
+    public static byte[] decrypt(byte[] cipherText, byte[] associatedData, byte[] key, byte[] iv) throws SecurityException {
         try {
             Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
             GCMParameterSpec spec = new GCMParameterSpec(AES_GCM_TAG_SIZE * 8, iv);

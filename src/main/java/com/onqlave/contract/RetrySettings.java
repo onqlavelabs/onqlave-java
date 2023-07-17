@@ -4,9 +4,9 @@ import java.time.Duration;
 
 
 public class RetrySettings {
-    private int maxRetries;
-    private Duration waitTime;
-    private Duration maxWaitTime;
+    private final int maxRetries;
+    private final Duration waitTime;
+    private final Duration maxWaitTime;
 
     public RetrySettings(int count, Duration waitTime, Duration maxWaitTime) {
         this.maxRetries = count;

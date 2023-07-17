@@ -19,7 +19,7 @@ public class EncryptedStreamProcessorImpl implements EncryptedStreamProcessor {
     }
 
     @Override
-    public AlgorithmDeserialiser ReadHeader() throws Exception {
+    public AlgorithmDeserialiser readHeader() throws Exception {
         byte[] headerLenBuffer = new byte[4];
         int dataLen = this.cipherStream.read(headerLenBuffer);
         if (dataLen == -1) {
@@ -39,12 +39,12 @@ public class EncryptedStreamProcessorImpl implements EncryptedStreamProcessor {
             throw new IOException("Invalid cipher data");
         }
         AlgorithmDeserialiser algorithm = new Algorithm();
-        algorithm.Deserialise(concatArrays(headerLenBuffer, headerBuffer));
+        algorithm.deserialise(concatArrays(headerLenBuffer, headerBuffer));
         return algorithm;
     }
 
     @Override
-    public byte[] ReadPacket() throws Exception {
+    public byte[] readPacket() throws Exception {
         byte[] packetLenBuffer = new byte[4];
         int dataLen = cipherStream.read(packetLenBuffer);
         if (dataLen < 4) {

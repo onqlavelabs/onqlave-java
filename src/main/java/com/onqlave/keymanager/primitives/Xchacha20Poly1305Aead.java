@@ -6,9 +6,9 @@ import com.onqlave.types.Key;
 import com.onqlave.utils.XChaCha20Poly1305Helper;
 
 public class Xchacha20Poly1305Aead implements AEAD {
-    private CPRNGService randomService;
-    private Key key;
-    private boolean prependIV;
+    private final CPRNGService randomService;
+    private final Key key;
+    private final boolean prependIV;
 
     public Xchacha20Poly1305Aead(CPRNGService randomService, Key key, boolean prependIV) {
         this.randomService = randomService;
@@ -17,12 +17,12 @@ public class Xchacha20Poly1305Aead implements AEAD {
     }
 
     @Override
-    public byte[] Encrypt(byte[] plaintext, byte[] associatedData) throws Exception {
-        return XChaCha20Poly1305Helper.Encrypt(key.Data().GetValue(), plaintext, associatedData);
+    public byte[] encrypt(byte[] plaintext, byte[] associatedData) throws Exception {
+        return XChaCha20Poly1305Helper.encrypt(key.data().getValue(), plaintext, associatedData);
     }
 
     @Override
-    public byte[] Decrypt(byte[] cipherText, byte[] associatedData) throws Exception {
-        return XChaCha20Poly1305Helper.Decrypt(this.key.Data().GetValue(), cipherText, associatedData);
+    public byte[] decrypt(byte[] cipherText, byte[] associatedData) throws Exception {
+        return XChaCha20Poly1305Helper.decrypt(this.key.data().getValue(), cipherText, associatedData);
     }
 }

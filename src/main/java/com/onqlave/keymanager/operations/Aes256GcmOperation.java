@@ -5,10 +5,10 @@ import com.onqlave.types.KeyFormat;
 import com.onqlave.types.KeyOperation;
 
 public class Aes256GcmOperation implements KeyOperation {
-    public static final int AES256_GCM_KEY_VERSION = 0;
-    public static final int AES256_GCM_KEY_SIZE = 32;
     private KeyFactory factory;
     private AesGcmKeyFormat format;
+    public static final int AES256_GCM_KEY_VERSION = 0;
+    public static final int AES256_GCM_KEY_SIZE = 32;
 
     public Aes256GcmOperation(KeyFactory factory) {
         this.factory = factory;
@@ -16,12 +16,12 @@ public class Aes256GcmOperation implements KeyOperation {
     }
 
     @Override
-    public KeyFormat GetFormat() {
+    public KeyFormat getFormat() {
         return this.format;
     }
 
     @Override
-    public KeyFactory GetFactory() {
+    public KeyFactory getFactory() {
         return this.factory;
     }
 

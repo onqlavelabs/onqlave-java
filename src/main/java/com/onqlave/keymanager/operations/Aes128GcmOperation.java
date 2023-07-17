@@ -18,12 +18,12 @@ public class Aes128GcmOperation implements KeyOperation {
     }
 
     @Override
-    public KeyFormat GetFormat() {
+    public KeyFormat getFormat() {
         return this.format;
     }
 
     @Override
-    public KeyFactory GetFactory() {
+    public KeyFactory getFactory() {
         return this.factory;
     }
 }

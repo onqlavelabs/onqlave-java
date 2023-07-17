@@ -3,7 +3,7 @@ package com.onqlave.encryption;
 import com.onqlave.types.AlgorithmDeserialiser;
 
 public interface EncryptedStreamProcessor {
-    AlgorithmDeserialiser ReadHeader() throws Exception;
+    AlgorithmDeserialiser readHeader() throws Exception;
 
-    byte[] ReadPacket() throws Exception;
+    byte[] readPacket() throws Exception;
 }

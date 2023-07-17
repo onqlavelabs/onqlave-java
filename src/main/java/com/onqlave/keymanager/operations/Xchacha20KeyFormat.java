@@ -12,7 +12,7 @@ public class Xchacha20KeyFormat implements KeyFormat {
     }
 
     @Override
-    public int Size() {
+    public int size() {
         return this.keySize;
     }
 }

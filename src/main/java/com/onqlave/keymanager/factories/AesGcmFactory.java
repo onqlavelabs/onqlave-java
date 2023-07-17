@@ -18,31 +18,31 @@ public class AesGcmFactory implements KeyFactory {
     }
 
     @Override
-    public Key NewKey(KeyOperation operation) throws Exception {
-        KeyFormat format = operation.GetFormat();
+    public Key newKey(KeyOperation operation) throws Exception {
+        KeyFormat format = operation.getFormat();
         if (this.validateKeyFormat(format)) {
             throw new SecurityException("aesGcmKeyFactory: invalid key format.");
         }
 
-        byte[] keyData = this.randomService.GetRandomBytes(format.Size());
+        byte[] keyData = this.randomService.getRandomBytes(format.size());
         return new AesGcmKey(
-                this.idService.NewKeyID(), operation, new AesGcmKeyData(
+                this.idService.newKeyID(), operation, new AesGcmKeyData(
                 keyData, KeyMaterialType.KeyMaterialSYMMETRIC, 0));
     }
 
     @Override
-    public Key NewKeyFromData(KeyOperation operation, byte[] keyData) throws Exception {
-        KeyFormat format = operation.GetFormat();
+    public Key newKeyFromData(KeyOperation operation, byte[] keyData) throws Exception {
+        KeyFormat format = operation.getFormat();
         if (!this.validateKeyFormat(format)) {
             throw new Exception("aesGcmKeyFactory: invalid key format.");
         }
 
-        return new AesGcmKey(this.idService.NewKeyID(), operation,
+        return new AesGcmKey(this.idService.newKeyID(), operation,
                 new AesGcmKeyData(keyData, KeyMaterialType.KeyMaterialSYMMETRIC, 0));
     }
 
     @Override
-    public AEAD Primitive(Key key) throws Exception {
+    public AEAD primitive(Key key) throws Exception {
         if (!this.validateKey(key)) {
             throw new Exception("aesGcmKeyFactory: invalid key.");
         }
@@ -50,12 +50,12 @@ public class AesGcmFactory implements KeyFactory {
     }
 
     private boolean validateKey(Key key) {
-        KeyData keyData = key.Data();
-        if (!this.validateKeyVersion(keyData.GetVersion(), Aes128GcmOperation.AES128_GCM_KEY_VERSION)) {
+        KeyData keyData = key.data();
+        if (!this.validateKeyVersion(keyData.getVersion(), Aes128GcmOperation.AES128_GCM_KEY_VERSION)) {
             return false;
         }
 
-        if (!AesGcmAead.ValidateKeySize(keyData.GetValue().length)) {
+        if (!AesGcmAead.validateKeySize(keyData.getValue().length)) {
             return false;
         }
 
@@ -63,7 +63,7 @@ public class AesGcmFactory implements KeyFactory {
     }
 
     private boolean validateKeyFormat(KeyFormat format) {
-        if (!AesGcmAead.ValidateKeySize(format.Size())) {
+        if (!AesGcmAead.validateKeySize(format.size())) {
             return false;
         }
         return true;

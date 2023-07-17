@@ -18,9 +18,9 @@ import org.bouncycastle.operator.InputDecryptorProvider;
 import org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo;
 
 public class RsaSsaPkcs1Sha implements Unwrapping {
-    private CPRNGService randomService;
-    private MessageDigest hashFunc;
-    private int hashID;
+    private final CPRNGService randomService;
+    private final MessageDigest hashFunc;
+    private final int hashID;
 
     public RsaSsaPkcs1Sha(CPRNGService randomService, MessageDigest hashFunc, int hashID) {
         this.randomService = randomService;
@@ -29,7 +29,7 @@ public class RsaSsaPkcs1Sha implements Unwrapping {
     }
 
     @Override
-    public byte[] UnwrapKey(byte[] wdk, byte[] epk, byte[] fp, byte[] password) throws Exception {
+    public byte[] unwrapKey(byte[] wdk, byte[] epk, byte[] fp, byte[] password) throws Exception {
         PrivateKey privateKey = this.parseEncryptedPKCS8(epk, new String(password));
         RSAPrivateCrtKey k = (RSAPrivateCrtKey) privateKey;
         return decryptOAEP(k, wdk);
@@ -42,7 +42,7 @@ public class RsaSsaPkcs1Sha implements Unwrapping {
         return cipher.doFinal(decodedBytes);
     }
 
-    public static PrivateKey parseEncryptedPKCS8(byte[] keyData, String password) throws Exception {
+    private PrivateKey parseEncryptedPKCS8(byte[] keyData, String password) throws Exception {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         byte[] decodedBytes = Base64.getDecoder().decode(keyData);
         PEMParser pemParser = new PEMParser(new InputStreamReader(new ByteArrayInputStream(decodedBytes)));

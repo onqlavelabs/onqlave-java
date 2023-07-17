@@ -35,22 +35,22 @@ public class Algorithm implements AlgorithmSeriliser, AlgorithmDeserialiser {
     }
 
     @Override
-    public byte[] Key() {
+    public byte[] key() {
         return key;
     }
 
     @Override
-    public byte Version() {
+    public byte version() {
         return version;
     }
 
     @Override
-    public String GetAlgorithm() {
+    public String getAlgorithm() {
         return AlgorithmTypeName.fromValue(algo);
     }
 
     @Override
-    public byte[] Serialise() throws Exception {
+    public byte[] serialise() throws Exception {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ByteBuffer headerLenBuffer = ByteBuffer.allocate(4);
         headerLenBuffer.order(ByteOrder.BIG_ENDIAN);
@@ -64,7 +64,7 @@ public class Algorithm implements AlgorithmSeriliser, AlgorithmDeserialiser {
     }
 
     @Override
-    public int Deserialise(byte[] buffer) throws Exception {
+    public int deserialise(byte[] buffer) throws Exception {
         if (buffer.length < 7) {
             throw new IllegalArgumentException("Invalid cipher data");
         }
@@ -83,4 +83,3 @@ public class Algorithm implements AlgorithmSeriliser, AlgorithmDeserialiser {
         return keyLen;
     }
 }
-

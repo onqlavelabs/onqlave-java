@@ -26,7 +26,6 @@ import com.onqlave.utils.Hasher;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.javatuples.Triplet;
 
 import java.net.http.HttpClient;
 import java.nio.charset.StandardCharsets;
@@ -37,13 +36,10 @@ import java.util.Map;
 import static com.onqlave.error.ErrorCodes.SdkErrorCode;
 
 public class KeyManagerImpl implements KeyManager {
-    private Connection keyManager;
-    private Configuration configuration;
-
-    private Map<String, WrappingKeyOperation> operation;
-
+    private final Connection keyManager;
+    private final Configuration configuration;
+    private final Map<String, WrappingKeyOperation> operation;
     private static final Logger LOGGER = LogManager.getLogger();
-
     private static final String ENCRYPT_RESOURCE_URL = "oe2/keymanager/encrypt";
     private static final String DECRYPT_RESOURCE_URL = "oe2/keymanager/decrypt";
 
@@ -53,7 +49,7 @@ public class KeyManagerImpl implements KeyManager {
         Connection httpClient = new ConnectionImpl(config, hasher, client);
         WrappingKeyFactory rsaSSAPKCS1KeyFactory = new RsaSsaPkcs1ShaFactory(randomService);
 
-        Map<String, WrappingKeyOperation> operations = new HashMap();
+        Map<String, WrappingKeyOperation> operations = new HashMap<>();
         operations.put(AlgorithmTypeValue.RSA_SSA_PKCS1_2048_SHA256_F4, new RsaSsaPkcs1ShaOperation(rsaSSAPKCS1KeyFactory));
         this.keyManager = httpClient;
         this.configuration = config;
@@ -61,14 +57,14 @@ public class KeyManagerImpl implements KeyManager {
     }
 
     @Override
-    public EncryptionKey FetchEncryptionKey() throws Exception {
+    public EncryptionKey fetchEncryptionKey() throws Exception {
         String operation = "FetchEncryptionKey";
         Instant start = Instant.now();
         LOGGER.debug(String.format("[onqlave] SDK: %s - Fetching encryption key", operation));
 
         EncryptionOpenRequest request = new EncryptionOpenRequest();
         try {
-            byte[] data = this.keyManager.Post(ENCRYPT_RESOURCE_URL, request);
+            byte[] data = this.keyManager.post(ENCRYPT_RESOURCE_URL, request);
             EncryptionOpenResponse response = new Gson().fromJson(new String(data, StandardCharsets.UTF_8), EncryptionOpenResponse.class);
 
             byte[] edk = response.getDK().getEncryptedDataKey();
@@ -77,9 +73,9 @@ public class KeyManagerImpl implements KeyManager {
             byte[] fp = response.getWK().getKeyFingerprint();
             String wrappingAlgo = response.getSecurityModel().getWrappingAlgorithm();
             String algo = response.getSecurityModel().getAlgorithm();
-            byte[] dk = this.UnwrapKey(wrappingAlgo, operation, wdk, epk, fp, this.configuration.getCredential().getSecretKey().getBytes());
+            byte[] dk = this.unwrapKey(wrappingAlgo, operation, wdk, epk, fp, this.configuration.getCredential().secretKey().getBytes());
 
-            String duration = DurationFormatter.DurationBetween(start, Instant.now());
+            String duration = DurationFormatter.durationBetween(start, Instant.now());
             LOGGER.debug(String.format("[onqlave] SDK: %s - Fetched encryption key: operation took %s", operation, duration));
 
             return new EncryptionKey(edk, dk, algo);
@@ -90,7 +86,7 @@ public class KeyManagerImpl implements KeyManager {
     }
 
     @Override
-    public byte[] FetchDecryptionKey(byte[]edk) throws Exception {
+    public byte[] fetchDecryptionKey(byte[]edk) throws Exception {
         String operation = "FetchDecryptionKey";
         Instant start = Instant.now();
         LOGGER.debug(String.format("[onqlave] SDK: %s - Fetching decryption key", operation));
@@ -98,15 +94,15 @@ public class KeyManagerImpl implements KeyManager {
         DecryptionOpenRequest request = new DecryptionOpenRequest(new String(edk));
 
         try {
-            byte[] data = this.keyManager.Post(DECRYPT_RESOURCE_URL, request);
+            byte[] data = this.keyManager.post(DECRYPT_RESOURCE_URL, request);
             DecryptionOpenResponse response = new Gson().fromJson(new String(data), DecryptionOpenResponse.class);
             byte[] wdk = response.getDK().getWrappedDataKey();
             byte[] epk = response.getWK().getEncryptedPrivateKey();
             byte[] fp = response.getWK().getKeyFingerprint();
             String wrappingAlgo = response.getSecurityModel().getWrappingAlgorithm();
-            byte[] dk = this.UnwrapKey(wrappingAlgo, operation, wdk, epk, fp, this.configuration.getCredential().getSecretKey().getBytes());
+            byte[] dk = this.unwrapKey(wrappingAlgo, operation, wdk, epk, fp, this.configuration.getCredential().secretKey().getBytes());
 
-            String duration = DurationFormatter.DurationBetween(start, Instant.now());
+            String duration = DurationFormatter.durationBetween(start, Instant.now());
             LOGGER.debug(String.format("[onqlave] SDK: %s - Fetched decryption key: operation took %s", operation, duration));
 
             return dk;
@@ -114,20 +110,18 @@ public class KeyManagerImpl implements KeyManager {
             LOGGER.error(String.format("[onqlave] SDK: %s - Failed fetching decryption key", operation));
             throw new OnqlaveError(ErrorCodes.SdkErrorCode, e.getMessage(), null);
         }
-
-
     }
 
-    private byte[] UnwrapKey(String algo, String operation, byte[] wdk, byte[] epk, byte[] fp, byte[] password) throws Exception {
+    private byte[] unwrapKey(String algo, String operation, byte[] wdk, byte[] epk, byte[] fp, byte[] password) throws Exception {
         if (!this.operation.containsKey(AlgorithmTypeValue.RSA_SSA_PKCS1_2048_SHA256_F4)) {
             throw new OnqlaveError(SdkErrorCode, "Error Unwrapkey", null);
         }
         WrappingKeyOperation wrappingOp = this.operation.get(AlgorithmTypeValue.RSA_SSA_PKCS1_2048_SHA256_F4);
-        WrappingKeyFactory factory = wrappingOp.GetFactory();
+        WrappingKeyFactory factory = wrappingOp.getFactory();
         byte[] dk;
         try {
-            Unwrapping primitive = factory.Primitive(wrappingOp);
-            dk = primitive.UnwrapKey(wdk, epk, fp, password);
+            Unwrapping primitive = factory.primitive(wrappingOp);
+            dk = primitive.unwrapKey(wdk, epk, fp, password);
         } catch (Exception e) {
             LOGGER.error(String.format("[onqlave] SDK: %s - Failed unwrap key", operation));
             throw e;

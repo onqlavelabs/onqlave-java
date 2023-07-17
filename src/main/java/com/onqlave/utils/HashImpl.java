@@ -18,8 +18,8 @@ public class HashImpl implements Hasher {
     }
 
     @Override
-    public String Digest(OnqlaveRequest body) throws Exception {
-        byte[] content = body.GetContent();
+    public String digest(OnqlaveRequest body) throws Exception {
+        byte[] content = body.getContent();
         byte[] digestBytes = MessageDigest.getInstance(DIGEST_ALGORITHM).digest(content);
         if (digestBytes.length < 1) {
             throw new Exception("Digest bytes is empty");
@@ -29,7 +29,7 @@ public class HashImpl implements Hasher {
     }
 
     @Override
-    public String Sign(Map<String, String> headers, String signingKey) throws Exception {
+    public String sign(Map<String, String> headers, String signingKey) throws Exception {
         Mac mac = Mac.getInstance(SIGNATURE_ALGORITHM);
         SecretKeySpec signingKeySpec = new SecretKeySpec(signingKey.getBytes(StandardCharsets.UTF_8), SIGNATURE_ALGORITHM);
         mac.init(signingKeySpec);

@@ -1,5 +1,5 @@
 package com.onqlave.contract.request;
 
 public interface OnqlaveRequest {
-    byte[] GetContent() throws Exception;
+    byte[] getContent() throws Exception;
 }

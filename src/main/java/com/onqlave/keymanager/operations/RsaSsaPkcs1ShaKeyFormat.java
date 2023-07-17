@@ -4,8 +4,8 @@ import com.onqlave.types.HashType;
 import com.onqlave.types.KeyFormat;
 
 public class RsaSsaPkcs1ShaKeyFormat implements KeyFormat {
-    private int version;
-    private HashType hashType;
+    private final int version;
+    private final HashType hashType;
 
     public RsaSsaPkcs1ShaKeyFormat(HashType hashType, int version) {
         this.hashType = hashType;
@@ -13,15 +13,11 @@ public class RsaSsaPkcs1ShaKeyFormat implements KeyFormat {
     }
 
     @Override
-    public int Size() {
+    public int size() {
         return 0;
     }
 
     public HashType getHashType() {
         return hashType;
-    }
-
-    public void setHashType(HashType hashType) {
-        this.hashType = hashType;
     }
 }

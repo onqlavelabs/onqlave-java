@@ -17,8 +17,8 @@ public class TestConfiguration {
 
         assertEquals(config.getArxID(), "cluster--lfGOnCmR9-niDEN5aAiBG");
         assertEquals(config.getArxURL(), "https://dp0.onqlave.io");
-        assertEquals(config.getCredential().getAccessKey(), "access_key");
-        assertEquals(config.getCredential().getSigningKey(), "signing_key");
-        assertEquals(config.getCredential().getSecretKey(), "secret_key");
+        assertEquals(config.getCredential().accessKey(), "access_key");
+        assertEquals(config.getCredential().signingKey(), "signing_key");
+        assertEquals(config.getCredential().secretKey(), "secret_key");
     }
 }

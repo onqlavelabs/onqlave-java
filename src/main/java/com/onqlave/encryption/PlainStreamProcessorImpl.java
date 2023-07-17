@@ -5,31 +5,22 @@ import com.onqlave.types.AlgorithmSeriliser;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.Base64;
 
 public class PlainStreamProcessorImpl implements PlainStreamProcessor {
-    public OutputStream getCipherStream() {
-        return cipherStream;
-    }
-
-    public void setCipherStream(OutputStream cipherStream) {
-        this.cipherStream = cipherStream;
-    }
-
-    private OutputStream cipherStream;
+    private final OutputStream cipherStream;
 
     public PlainStreamProcessorImpl(OutputStream cipherStream) {
         this.cipherStream = cipherStream;
     }
 
     @Override
-    public void WriteHeader(AlgorithmSeriliser algorithm) throws Exception {
-        byte[] header = algorithm.Serialise();
+    public void writeHeader(AlgorithmSeriliser algorithm) throws Exception {
+        byte[] header = algorithm.serialise();
         this.cipherStream.write(header);
     }
 
     @Override
-    public void WritePacket(byte[] packet) throws Exception {
+    public void writePacket(byte[] packet) throws Exception {
         ByteBuffer dataLenBuffer = ByteBuffer.allocate(4);
         dataLenBuffer.order(ByteOrder.BIG_ENDIAN);
         dataLenBuffer.putInt(packet.length);

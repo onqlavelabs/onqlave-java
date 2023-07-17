@@ -8,11 +8,11 @@ public class TestAesAeadHelper {
     public void TestAes() throws Exception {
         String plainText = "this is a plain string";
         CPRNGServiceImpl random = new CPRNGServiceImpl();
-        byte[] key = random.GetRandomBytes(32);
-        byte[] iv = random.GetRandomBytes(12);
-        byte []ciphertext = AESAEADHelper.Encrypt(plainText.getBytes(), new byte[0], key, iv);
+        byte[] key = random.getRandomBytes(32);
+        byte[] iv = random.getRandomBytes(12);
+        byte []ciphertext = AESAEADHelper.encrypt(plainText.getBytes(), new byte[0], key, iv);
 
-        byte []plaintext = AESAEADHelper.Decrypt(ciphertext, new byte[0], key, iv);
+        byte []plaintext = AESAEADHelper.decrypt(ciphertext, new byte[0], key, iv);
 
         System.out.println(new String(plaintext));
     }

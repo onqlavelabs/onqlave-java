@@ -18,64 +18,64 @@ public class Xchacha20Poly1305Factory implements KeyFactory {
     }
 
     @Override
-    public Key NewKey(KeyOperation operation) throws Exception {
-        KeyFormat format = operation.GetFormat();
-        if (this.ValidateKeyFormat(format)) {
+    public Key newKey(KeyOperation operation) throws Exception {
+        KeyFormat format = operation.getFormat();
+        if (this.validateKeyFormat(format)) {
             throw new Exception("aesGcmKeyFactory: invalid key format.");
         }
 
-        byte[] keyData = this.randomService.GetRandomBytes(format.Size());
-        return new Xchacha20Poly1350Key(this.idService.NewKeyID(), operation,
+        byte[] keyData = this.randomService.getRandomBytes(format.size());
+        return new Xchacha20Poly1350Key(this.idService.newKeyID(), operation,
                 new Xchacha20Poly1350KeyData(keyData, KeyMaterialType.KeyMaterialSYMMETRIC, 0));
     }
 
     @Override
-    public Key NewKeyFromData(KeyOperation operation, byte[] keyData) throws Exception {
-        KeyFormat format = operation.GetFormat();
-        if (this.ValidateKeyFormat(format)) {
+    public Key newKeyFromData(KeyOperation operation, byte[] keyData) throws Exception {
+        KeyFormat format = operation.getFormat();
+        if (this.validateKeyFormat(format)) {
             throw new Exception("aesGcmKeyFactory: invalid key format.");
         }
-        return new Xchacha20Poly1350Key(this.idService.NewKeyID(), operation,
+        return new Xchacha20Poly1350Key(this.idService.newKeyID(), operation,
                 new Xchacha20Poly1350KeyData(keyData, KeyMaterialType.KeyMaterialSYMMETRIC, 0));
     }
 
     @Override
-    public AEAD Primitive(Key key) throws Exception {
-        if (this.ValidateKey(key)) {
+    public AEAD primitive(Key key) throws Exception {
+        if (this.validateKey(key)) {
             return null;
         }
         return new Xchacha20Poly1305Aead(this.randomService, key,true);
     }
 
-    private boolean ValidateKey(Key key) throws Exception {
-        if (this.ValidateKeyVersion(key.Data().GetVersion(), Xchacha20Poly1305Operation.XCHACHA20_POLY1305_VERSION)) {
+    private boolean validateKey(Key key) throws Exception {
+        if (this.validateKeyVersion(key.data().getVersion(), Xchacha20Poly1305Operation.XCHACHA20_POLY1305_VERSION)) {
             return false;
         }
 
-        byte[] value = key.Data().GetValue();
+        byte[] value = key.data().getValue();
 
-        if (this.ValidateXChaChaKeySize(value.length)) {
+        if (this.validateXChaChaKeySize(value.length)) {
             return false;
         }
 
         return true;
     }
 
-    private boolean ValidateKeyFormat(KeyFormat format) {
-        if (this.ValidateXChaChaKeySize(format.Size())) {
+    private boolean validateKeyFormat(KeyFormat format) {
+        if (this.validateXChaChaKeySize(format.size())) {
             return false;
         }
         return true;
     }
 
-    private boolean ValidateKeyVersion(int version, int maxExpected) {
+    private boolean validateKeyVersion(int version, int maxExpected) {
         if (version > maxExpected) {
             return false;
         }
         return true;
     }
 
-    private boolean ValidateXChaChaKeySize(int sizeInBytes) {
+    private boolean validateXChaChaKeySize(int sizeInBytes) {
         if (sizeInBytes != 32) {
             return false;
         }

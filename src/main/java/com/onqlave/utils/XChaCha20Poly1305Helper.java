@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 public class XChaCha20Poly1305Helper {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public static byte[] Encrypt(byte[] key, byte[] plaintext, byte[] associatedData) throws Exception {
+    public static byte[] encrypt(byte[] key, byte[] plaintext, byte[] associatedData) throws Exception {
         try {
             XChaCha20Poly1305 cipher = new XChaCha20Poly1305(key);
             return cipher.encrypt(plaintext, associatedData);
@@ -18,7 +18,7 @@ public class XChaCha20Poly1305Helper {
         }
     }
 
-    public static byte[] Decrypt(byte[] key, byte[] cipherText, byte[] associatedData) throws Exception {
+    public static byte[] decrypt(byte[] key, byte[] cipherText, byte[] associatedData) throws Exception {
         try {
             XChaCha20Poly1305 cipher = new XChaCha20Poly1305(key);
             return cipher.decrypt(cipherText, associatedData);

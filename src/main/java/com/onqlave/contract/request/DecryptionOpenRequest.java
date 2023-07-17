@@ -13,14 +13,14 @@ class ObjectToByteConverter {
 
 public class DecryptionOpenRequest implements OnqlaveRequest {
     @SerializedName(value = "encrypted_data_key")
-    private String EDK;
+    private String edk;
 
-    public DecryptionOpenRequest(String EDK) {
-        this.EDK = EDK;
+    public DecryptionOpenRequest(String edk) {
+        this.edk = edk;
     }
 
     @Override
-    public byte[] GetContent() throws Exception {
+    public byte[] getContent() throws Exception {
        return ObjectToByteConverter.convertObjectToBytes(this);
     }
 }

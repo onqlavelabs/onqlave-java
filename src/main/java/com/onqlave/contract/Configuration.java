@@ -1,8 +1,8 @@
 package com.onqlave.contract;
 
 public class Configuration {
-    private Credential credential;
-    private RetrySettings retry;
+    private final Credential credential;
+    private final RetrySettings retry;
     private String arxURL;
 
     private String arxID;

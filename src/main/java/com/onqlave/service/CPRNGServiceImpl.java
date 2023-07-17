@@ -12,21 +12,21 @@ public class CPRNGServiceImpl implements CPRNGService {
     }
 
     @Override
-    public byte[] GetRandomBytes(int numberBytes) {
+    public byte[] getRandomBytes(int numberBytes) {
         byte[] buf = new byte[numberBytes];
         random.nextBytes(buf);
         return buf;
     }
 
     @Override
-    public int GetRandomInt32Bytes() {
+    public int getRandomInt32Bytes() {
         byte[] buf = new byte[4];
         this.random.nextBytes(buf);
         return ByteBuffer.wrap(buf).getInt();
     }
 
     @Override
-    public InputStream GetRandomReader() {
+    public InputStream getRandomReader() {
         return new InputStream() {
             public int read() {
                 byte[] buf = new byte[1];

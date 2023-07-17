@@ -17,12 +17,12 @@ public class RsaSsaPkcs1ShaOperation implements WrappingKeyOperation {
         this.format = format;
     }
     @Override
-    public KeyFormat GetFormat() {
+    public KeyFormat getFormat() {
         return this.format;
     }
 
     @Override
-    public WrappingKeyFactory GetFactory() {
+    public WrappingKeyFactory getFactory() {
         return this.factory;
     }
 

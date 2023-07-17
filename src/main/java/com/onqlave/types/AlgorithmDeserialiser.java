@@ -1,9 +1,9 @@
 package com.onqlave.types;
 
 public interface AlgorithmDeserialiser {
-    int Deserialise(byte[] buffer) throws Exception;
-    byte[] Key();
-    byte Version();
-    String GetAlgorithm();
+    int deserialise(byte[] buffer) throws Exception;
+    byte[] key();
+    byte version();
+    String getAlgorithm();
 }
 

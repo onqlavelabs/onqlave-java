@@ -12,8 +12,8 @@ import org.javatuples.Pair;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import static com.onqlave.keymanager.primitives.HashFunction.GetAlgo;
-import static com.onqlave.keymanager.primitives.HashFunction.GetHashFunc;
+import static com.onqlave.keymanager.primitives.HashFunction.getAlgo;
+import static com.onqlave.keymanager.primitives.HashFunction.getHashFunc;
 
 public class RsaSsaPkcs1ShaFactory implements WrappingKeyFactory {
     public CPRNGService randomService;
@@ -27,24 +27,12 @@ public class RsaSsaPkcs1ShaFactory implements WrappingKeyFactory {
         if (HashSafeForSignature(hashAlg) != null) {
             return new Pair<>(null, null);
         }
-        MessageDigest hashFunc = GetHashFunc(hashAlg);
+        MessageDigest hashFunc = getHashFunc(hashAlg);
         if (hashFunc == null) {
             return new Pair<>(null, null);
         }
         return new Pair<>(hashFunc, Integer.valueOf(hashFunc.hashCode()));
     }
-
-//    public static Object[] RSAHashFunc(String hashAlg) throws Exception {
-//        if (HashSafeForSignature(hashAlg) != null) {
-//            return new Object[]{null, 0, HashSafeForSignature(hashAlg)};
-//        }
-//        MessageDigest hashFunc = GetHashFunc(hashAlg);
-//        if (hashFunc == null) {
-//            return new Object[]{null, 0, new Exception(String.format("invalid hash function: %s", hashAlg))};
-//        }
-//        int hashID = hashFunc.hashCode();
-//        return new Object[]{hashFunc, hashID, null};
-//    }
 
     public static Exception HashSafeForSignature(String hashAlg) {
         return switch (hashAlg) {
@@ -55,18 +43,17 @@ public class RsaSsaPkcs1ShaFactory implements WrappingKeyFactory {
     }
 
     public static String hashName(HashType hash) {
-        return GetAlgo(hash);
+        return getAlgo(hash);
     }
 
     @Override
-    public Unwrapping Primitive(WrappingKeyOperation operation) throws Exception {
-        RsaSsaPkcs1ShaKeyFormat format = (RsaSsaPkcs1ShaKeyFormat) operation.GetFormat();
+    public Unwrapping primitive(WrappingKeyOperation operation) throws Exception {
+        RsaSsaPkcs1ShaKeyFormat format = (RsaSsaPkcs1ShaKeyFormat) operation.getFormat();
         String hashAlg = hashName(format.getHashType());
         Pair<MessageDigest, Integer> result = RSAHashFunc(hashAlg);
         if (result == null) {
             throw new Exception("cannot get value in pair");
         }
-        RsaSsaPkcs1Sha rsassapkcs1sha = new RsaSsaPkcs1Sha(randomService, result.getValue0(), result.getValue1().intValue());
-        return rsassapkcs1sha;
+        return new RsaSsaPkcs1Sha(randomService, result.getValue0(), result.getValue1().intValue());
     }
 }

@@ -1,5 +1,8 @@
 package com.onqlave.example;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onqlave.contract.Credential;
 import com.onqlave.contract.RetrySettings;
 import com.onqlave.encryption.Encryption;
@@ -10,9 +13,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,16 +29,26 @@ public class Example {
     public static final String RED_BOLD = "\u001B[31;1m";
     public static final String GREEN_BOLD = "\u001B[32;1m";
     public static final String YELLOW_BOLD = "\u001B[33;1m";
+    public static final String FILE_CONFIGURATION = "YOUR_FILE_CONFIGURATION.json";
 
     public static void main(String args[]) {
-        Dotenv dotenv = Dotenv.load();
-        Credential credential = new Credential(dotenv.get("ACCESS_KEY"), dotenv.get("SIGNING_KEY"), dotenv.get("SECRET_KEY"));
+        ObjectMapper configMapper = new ObjectMapper();
+        Configuration configuration;
 
-        RetrySettings retry = new RetrySettings(Integer.parseInt(dotenv.get("MAX_RETRIES")),
-                Duration.ofSeconds(Integer.parseInt(dotenv.get("WAIT_TIME"))),
-                Duration.ofSeconds(Integer.parseInt(dotenv.get("MAX_WAIT_TIME"))));
+        Path path = Paths.get(FILE_CONFIGURATION);
+        try {
+            configuration = configMapper.readValue(new File(path.toAbsolutePath().toString()), Configuration.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-        Encryption enc = new Encryption(credential, retry, dotenv.get("ARX_URL"),Boolean.parseBoolean(dotenv.get("DEBUG")) );
+        Credential credential = new Credential(configuration.accessKey, configuration.signingKey, configuration.secretKey);
+
+        RetrySettings retry = new RetrySettings(configuration.maxRetries,
+                Duration.ofSeconds(configuration.waitTime),
+                Duration.ofSeconds(configuration.maxWaitTime));
+
+        Encryption enc = new Encryption(credential, retry, configuration.arxURL, configuration.debug);
 
         String plainText = "This is a plain text string";
         String associatedData = "this data needs to be authenticated, but not encrypted";
@@ -71,7 +84,7 @@ public class Example {
         ByteArrayOutputStream decryptPlainStream = new ByteArrayOutputStream();
 
         try {
-            enc.decryptStream(dataEncrypted,decryptPlainStream,associatedData.getBytes());
+            enc.decryptStream(dataEncrypted, decryptPlainStream, associatedData.getBytes());
         } catch (Exception e) {
             System.out.println(RED_BOLD + "Decrypted Stream EXCEPTION: " + e.getMessage() + RESET);
         }

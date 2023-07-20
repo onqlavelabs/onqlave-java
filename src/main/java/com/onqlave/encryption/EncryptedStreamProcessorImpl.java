@@ -2,17 +2,13 @@ package com.onqlave.encryption;
 
 import com.onqlave.types.Algorithm;
 import com.onqlave.types.AlgorithmDeserialiser;
-import org.javatuples.Pair;
-import org.javatuples.Tuple;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 public class EncryptedStreamProcessorImpl implements EncryptedStreamProcessor {
-    private InputStream cipherStream;
+    private final InputStream cipherStream;
 
     public EncryptedStreamProcessorImpl(InputStream cipherStream) {
         this.cipherStream = cipherStream;
@@ -59,7 +55,7 @@ public class EncryptedStreamProcessorImpl implements EncryptedStreamProcessor {
         return buffer;
     }
 
-    private byte[] concatArrays(byte[] arr1, byte[] arr2) {
+    private byte[] concatArrays(final byte[] arr1, final byte[] arr2) {
         byte[] result = new byte[arr1.length + arr2.length];
         System.arraycopy(arr1, 0, result, 0, arr1.length);
         System.arraycopy(arr2, 0, result, arr1.length, arr2.length);

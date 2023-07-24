@@ -144,6 +144,10 @@ public class Encryption {
             } catch (Exception e) {
                 LOGGER.error(String.format("[onqlave] SDK: %s - Failed encrypting plain data", operation));
                 return;
+            } finally {
+                if (cipherStream != null) {
+                    cipherStream.close();
+                }
             }
         }
 
@@ -151,7 +155,8 @@ public class Encryption {
         LOGGER.debug(String.format("[onqlave] SDK: %s - Encrypted plain data: operation took %s", operation, duration));
     }
 
-    public void decryptStream(InputStream cipherStream, OutputStream plainStream, byte[] associatedData) throws Exception {
+    public void decryptStream(InputStream cipherStream, OutputStream plainStream, byte[] associatedData) throws
+            Exception {
         String operation = "DecryptStream";
         Instant start = Instant.now();
         LOGGER.debug(String.format("[onqlave] SDK: %s - Decrypting cipher data", operation));
@@ -170,6 +175,10 @@ public class Encryption {
             } catch (Exception e) {
                 LOGGER.error(String.format("[onqlave] SDK: %s - Failed decrypting plain data", operation));
                 return;
+            } finally {
+                if (plainStream != null) {
+                    plainStream.close();
+                }
             }
         }
 

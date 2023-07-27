@@ -140,9 +140,41 @@
   </build>
   <distributionManagement>
     <repository>
-      <id>github</id>
-      <name>GitHub Packages</name>
-      <url>https://maven.pkg.github.com/onqlavelabs/onqlave-java</url>
+      <id>${repo-id}</id>
+      <name>${repo-name}</name>
+      <url>${repo-url}</url>
     </repository>
   </distributionManagement>
+  <profiles>
+    <profile>
+      <id>dev</id>
+      <activation>
+        <!-- activate when env=dev -->
+        <property>
+          <name>env.PROFILE</name>
+          <value>dev</value>
+        </property>
+      </activation>
+      <properties>
+        <repo-id>github</repo-id>
+        <repo-name>GitHub Packages</repo-name>
+        <repo-url>https://maven.pkg.github.com/onqlavelabs/onqlave-java</repo-url>
+      </properties>
+    </profile>
+    <profile>
+      <id>prod</id>
+      <activation>
+        <!-- activate when env=prod -->
+        <property>
+          <name>env.PROFILE</name>
+          <value>prod</value>
+        </property>
+      </activation>
+      <properties>
+        <repo-id>ossrh</repo-id>
+        <repo-name>Central Repository OSSRH</repo-name>
+        <repo-url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</repo-url>
+      </properties>
+    </profile>
+  </profiles>
 </project>

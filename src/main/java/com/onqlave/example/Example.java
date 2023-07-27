@@ -19,7 +19,9 @@ public class Example {
     public static final String GREEN_BOLD = "\u001B[32;1m";
     public static final String YELLOW_BOLD = "\u001B[33;1m";
     public static final String FILE_CONFIGURATION = "YOUR_FILE_CONFIGURATION.json";
-    public static final String FILE_INPUT_STREAM = "YOUR_FILE_INPUT_STREAM.txt";
+    public static final String FILE_INPUT_STREAM = "src/main/java/com/onqlave/example/data.in";
+    public static final String FILE_OUTPUT_STREAM = "src/main/java/com/onqlave/example/data.o";
+    public static final String FILE_DECRYPTED_STREAM = "src/main/java/com/onqlave/example/dataout.in";
     public static Encryption encryption;
 
     public static void main(String args[]) {
@@ -76,6 +78,7 @@ public class Example {
         ByteArrayOutputStream encryptCipherStream = new ByteArrayOutputStream();
         try {
             encryption.encryptStream(encryptPlainStream, encryptCipherStream, associatedData.getBytes());
+            writeOutputStream(FILE_OUTPUT_STREAM, encryptCipherStream);
         } catch (Exception e) {
             System.out.println(RED_BOLD + "Encrypted Stream EXCEPTION: " + e.getMessage() + RESET);
         } finally {
@@ -86,7 +89,7 @@ public class Example {
             }
         }
 
-        ByteArrayInputStream dataEncrypted = new ByteArrayInputStream(encryptCipherStream.toByteArray());
+        InputStream dataEncrypted = readInputStream(FILE_OUTPUT_STREAM);
         ByteArrayOutputStream decryptPlainStream = new ByteArrayOutputStream();
 
         try {
@@ -101,7 +104,7 @@ public class Example {
                 e.printStackTrace();
             }
         }
-        System.out.printf(YELLOW_BOLD + "Decrypt stream result: %s\n", new String(decryptPlainStream.toByteArray()) + RESET);
+        writeOutputStream(FILE_DECRYPTED_STREAM, decryptPlainStream);
         System.out.println(GREEN_BOLD + "=======================END ENCRYPTION A STREAM ==========================\n\n\n");
     }
 
@@ -114,5 +117,13 @@ public class Example {
             e.printStackTrace();
         }
         return encryptPlainStream;
+    }
+
+    public static void writeOutputStream(String fileName, ByteArrayOutputStream fileOutputStream) {
+        try (OutputStream outputStream = new FileOutputStream(fileName)) {
+            fileOutputStream.writeTo(outputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

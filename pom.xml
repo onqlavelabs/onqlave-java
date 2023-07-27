@@ -6,7 +6,7 @@
 
   <groupId>com.onqlave.onqlave-java</groupId>
   <artifactId>onqlave-sdk</artifactId>
-  <version>1.1.1</version>
+  <version>${projectVersion}</version>
 
   <name>onqlave-java</name>
   <!-- FIXME change it to the project's website -->
@@ -16,6 +16,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
+    <projectVersion>1.1.1</projectVersion>
   </properties>
 
   <dependencies>
@@ -137,4 +138,11 @@
       </plugins>
     </pluginManagement>
   </build>
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>GitHub Packages</name>
+      <url>https://maven.pkg.github.com/onqlavelabs/onqlave-java</url>
+    </repository>
+  </distributionManagement>
 </project>

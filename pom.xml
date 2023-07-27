@@ -4,18 +4,43 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.onqlave.onqlave-java</groupId>
-  <artifactId>onqlave-sdk</artifactId>
-  <version>1.1.1</version>
+  <version>${projectVersion}</version>
 
+  <groupId>io.github.onqlavelabs</groupId>
+  <artifactId>onqlave-java</artifactId>
+  
   <name>onqlave-java</name>
   <!-- FIXME change it to the project's website -->
-  <url>http://www.example.com</url>
+  <url>https://github.com/onqlavelabs/onqlave-java</url>
+  <description>Onqlave Java SDK</description>
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Cesc</name>
+      <email>Cesc@onqlave.com</email>
+      <organization>Onqlave</organization>
+      <organizationUrl>https://github.com/onqlavelabs</organizationUrl>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:git://github.com/onqlavelabs/onqlave-java.git</connection>
+    <developerConnection>scm:git:ssh://github.com:onqlavelabs/onqlave-java.git</developerConnection>
+    <url>https://github.com/onqlavelabs/onqlave-java/tree/main</url>
+  </scm>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
+    <projectVersion>1.1.1</projectVersion>
   </properties>
 
   <dependencies>
@@ -137,4 +162,113 @@
       </plugins>
     </pluginManagement>
   </build>
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>${repo-id}</id>
+      <name>${repo-name}</name>
+      <url>${repo-url}</url>
+    </repository>
+  </distributionManagement>
+
+  <repositories>
+
+  </repositories>
+
+  <profiles>
+    <profile>
+      <id>dev</id>
+      <activation>
+        <!-- activate when env=dev -->
+        <property>
+          <name>env.PROFILE</name>
+          <value>dev</value>
+        </property>
+      </activation>
+      <properties>
+        <repo-id>github</repo-id>
+        <repo-name>GitHub Packages</repo-name>
+        <repo-url>https://maven.pkg.github.com/onqlavelabs/onqlave-java</repo-url>
+      </properties>
+    </profile>
+    <profile>
+      <id>ossrh</id>
+      <activation>
+        <property>
+          <name>env.PROFILE</name>
+          <value>prod</value>
+        </property>
+      </activation>
+      <properties>
+        <repo-id>ossrh</repo-id>
+        <repo-name>Central Repository OSSRH</repo-name>
+        <repo-url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</repo-url>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>nexus-staging-maven-plugin</artifactId>
+            <version>1.6.13</version>
+            <extensions>true</extensions>
+            <configuration>
+              <serverId>ossrh</serverId>
+              <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+              <autoReleaseAfterClose>true</autoReleaseAfterClose>
+            </configuration>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>2.2.1</version>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>2.9.1</version>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.5</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <gpgArguments>
+                <arg>--pinentry-mode</arg>
+                <arg>loopback</arg>
+              </gpgArguments>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

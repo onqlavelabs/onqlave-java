@@ -1,0 +1,63 @@
+# Publishing Java packages with Maven
+name: Publish Development
+on:
+  push:
+    branches:
+      - feature/workflow
+
+jobs:
+  publish:
+    # if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && endsWith(github.event.base_ref, '/main')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: "print debug"
+        run: |
+          echo ${{github.event.base_ref}}
+
+      - name: "Release PR info"
+        if: github.event_name != 'workflow_dispatch'
+        run: echo "PR ${{ github.event.number }}"
+      - uses: actions/checkout@v3
+
+      # java publish
+      - name: Set up Maven Central Repository
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          server-id: ossrh
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+
+      # - name: Extract tag version
+      #   id: extract_tag
+      #   run: echo "::set-output name=tag::$(echo ${{ github.ref }} | sed -e 's/^refs\/tags\/v//' -e 's/^refs\/heads\/v//')"
+
+      - name: Update pom.xml version
+        # sed only version of project
+        run: |
+          sed -i "s/<projectVersion>.*<\/projectVersion>/<projectVersion>0.0.1<\/projectVersion>/" pom.xml
+
+      ############# GITHUB RELEASE ##############
+      - name: Extract release notes
+        id: extract-release-notes
+        uses: ffurrer2/extract-release-notes@v1
+
+      - name: "Create a GitHub release v${{ steps.extract_tag.outputs.tag }}"
+        uses: ncipollo/release-action@v1
+        with:
+          tag: "v${{ steps.extract_tag.outputs.tag }}"
+          name: "Release v${{ steps.extract_tag.outputs.tag }}"
+          body: |
+            ## Release notes:
+            ${{ steps.extract-release-notes.outputs.release_notes }}
+
+      - name: Publish package
+        run: mvn --batch-mode deploy
+        env:
+          PROFILE: prod
+          MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME_TEST }}
+          MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD_TEST }}

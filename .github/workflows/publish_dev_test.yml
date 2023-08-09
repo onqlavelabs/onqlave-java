@@ -20,6 +20,11 @@ jobs:
         run: echo "PR ${{ github.event.number }}"
       - uses: actions/checkout@v3
 
+      - name: git config
+        run: |
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
       # java publish
       - name: Set up Maven Central Repository
         uses: actions/setup-java@v3

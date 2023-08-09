@@ -41,6 +41,23 @@ jobs:
         run: |
           sed -i "s/<projectVersion>.*<\/projectVersion>/<projectVersion>0.0.3<\/projectVersion>/" pom.xml
 
+      - name: Publish package
+        run: mvn --batch-mode deploy
+        env:
+          PROFILE: dev
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  release:
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - name: "Release PR info"
+        if: github.event_name != 'workflow_dispatch'
+        run: echo "PR ${{ github.event.number }}"
+      - uses: actions/checkout@v3
       ############# GITHUB RELEASE ##############
       - name: Extract release notes
         id: extract-release-notes
@@ -54,9 +71,3 @@ jobs:
           body: |
             ## Release notes:
             ${{ steps.extract-release-notes.outputs.release_notes }}
-
-      - name: Publish package
-        run: mvn --batch-mode deploy
-        env:
-          PROFILE: dev
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

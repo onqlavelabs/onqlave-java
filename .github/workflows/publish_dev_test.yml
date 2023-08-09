@@ -40,7 +40,7 @@ jobs:
         id: extract_tag
 #        run: echo "::set-output name=tag::$(echo ${{ github.ref }} | sed -e 's/^refs\/tags\/v//' -e 's/^refs\/heads\/v//')"
 #        new syntax to $GITHUB_OUTPUT
-        run: echo ${{ github.ref }} | sed -e 's/^refs\/tags\/v//' -e 's/^refs\/heads\/v//' >> $GITHUB_ENV
+        run: echo "tag=$(echo ${{ github.ref }} | sed -e 's/^refs\/tags\/v//' -e 's/^refs\/heads\/v//')" >> $GITHUB_ENV
       - name: Update pom.xml version
         # sed only version of project
         run: |

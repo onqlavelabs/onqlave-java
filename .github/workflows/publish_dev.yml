@@ -31,8 +31,7 @@ jobs:
 
       - name: Extract tag version
         id: extract_tag
-        run: echo "::set-output name=tag::$(echo ${{ github.ref }} | sed -e 's/^refs\/tags\/v//' -e 's/^refs\/heads\/v//')"
-
+        run: echo "tag=$(echo ${{ github.ref }} | sed -e 's/^refs\/tags\/v//' -e 's/^refs\/heads\/v//')" >> "$GITHUB_OUTPUT"
       - name: Update pom.xml version
         # sed only version of project
         run: |
@@ -43,3 +42,9 @@ jobs:
         env:
           PROFILE: dev
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  release:
+    needs: publish
+    uses: ./.github/workflows/release.yml
+    with:
+      tag: ${{ needs.publish.outputs.tag }}

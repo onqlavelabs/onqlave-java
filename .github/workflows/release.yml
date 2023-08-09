@@ -24,11 +24,11 @@ jobs:
         id: extract-release-notes
         uses: ffurrer2/extract-release-notes@v1
 
-      - name: "Create a GitHub release v${{ github.event.inputs.tag }}"
+      - name: "Create a GitHub release v${{ inputs.tag }}"
         uses: ncipollo/release-action@v1
         with:
-          tag: "v${{ github.event.inputs.tag }}"
-          name: "Release v${{ github.event.inputs.tag }}"
+          tag: "v${{ inputs.tag }}"
+          name: "Release v${{ inputs.tag }}"
           body: |
             ## Release notes:
             ${{ steps.extract-release-notes.outputs.release_notes }}

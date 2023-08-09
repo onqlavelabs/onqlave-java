@@ -4,7 +4,7 @@ on:
 #    with tag
     inputs:
       tag:
-        description: 'tag'\
+        description: 'tag'
         type: string
         required: true
         default: 'v0.0.0'

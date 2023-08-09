@@ -49,6 +49,7 @@ jobs:
       - name: "Create a GitHub release v0.0.3"
         uses: ncipollo/release-action@v1
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           tag: "v0.0.3"
           name: "Release v0.0.3"
           body: |

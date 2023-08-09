@@ -12,6 +12,8 @@ jobs:
     permissions:
       contents: write
       packages: write
+    outputs:
+      tag: ${{ steps.extract_tag.outputs.tag }}
     steps:
       - name: "print debug"
         run: |
@@ -36,12 +38,13 @@ jobs:
 
       - name: Extract tag version
         id: extract_tag
-        run: echo "::set-output name=tag::$(echo ${{ github.ref }} | sed -e 's/^refs\/tags\/v//' -e 's/^refs\/heads\/v//')"
-
+#        run: echo "::set-output name=tag::$(echo ${{ github.ref }} | sed -e 's/^refs\/tags\/v//' -e 's/^refs\/heads\/v//')"
+#        new syntax to $GITHUB_OUTPUT
+        run: echo ${{ github.ref }} | sed -e 's/^refs\/tags\/v//' -e 's/^refs\/heads\/v//' >> $GITHUB_ENV
       - name: Update pom.xml version
         # sed only version of project
         run: |
-          sed -i "s/<projectVersion>.*<\/projectVersion>/<projectVersion>0.0.3<\/projectVersion>/" pom.xml
+          sed -i "s/<projectVersion>.*<\/projectVersion>/<projectVersion>${{ steps.extract_tag.outputs.tag }}<\/projectVersion>/" pom.xml
 
       - name: Publish package
         run: mvn --batch-mode deploy
@@ -51,25 +54,6 @@ jobs:
 
   release:
     needs: publish
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      packages: write
-    steps:
-      - name: "Release PR info"
-        if: github.event_name != 'workflow_dispatch'
-        run: echo "PR ${{ github.event.number }}"
-      - uses: actions/checkout@v3
-      ############# GITHUB RELEASE ##############
-      - name: Extract release notes
-        id: extract-release-notes
-        uses: ffurrer2/extract-release-notes@v1
-
-      - name: "Create a GitHub release v0.0.3"
-        uses: ncipollo/release-action@v1
-        with:
-          tag: "v0.0.3"
-          name: "Release v0.0.3"
-          body: |
-            ## Release notes:
-            ${{ steps.extract-release-notes.outputs.release_notes }}
+    uses: ./.github/workflows/release.yml
+    with:
+      tag: ${{ needs.publish.outputs.tag }}

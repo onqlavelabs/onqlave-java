@@ -3,7 +3,7 @@ name: Publish Development
 on:
   push:
     tags:
-      - 'v0.1.*'
+      - 'v0.*.*'
 
 jobs:
   publish:
@@ -63,8 +63,17 @@ jobs:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
 
-  release:
-    needs: publish
-    uses: ./.github/workflows/release.yml
-    with:
-      tag: ${{ needs.publish.outputs.tag }}
+      ############# GITHUB RELEASE ##############
+      - name: Extract release notes
+        id: extract-release-notes
+        uses: ffurrer2/extract-release-notes@v1
+
+      - name: "Create a GitHub release v${{ inputs.tag }}"
+        uses: ncipollo/release-action@v1
+        with:
+          tag: "v${{ steps.extract_tag.outputs.tag }}"
+          name: "Release v${{ steps.extract_tag.outputs.tag }}"
+          body: |
+            ## Release notes:
+            ${{ steps.extract-release-notes.outputs.release_notes }}
+

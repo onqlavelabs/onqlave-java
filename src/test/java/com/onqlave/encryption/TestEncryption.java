@@ -8,6 +8,7 @@ import org.junit.Test;
 import java.lang.String;
 import java.time.Duration;
 
+import static org.junit.Assume.assumeFalse;
 import static org.junit.Assert.assertEquals;
 
 class TestEncryption {
@@ -21,9 +22,8 @@ class TestEncryption {
     }
 
     private Encryption createEncryption(String accessKey, String signingKey, String secretKey, String arxURL) {
-        if (accessKey == null || signingKey == null || secretKey == null || arxURL == null) {
-            throw new RuntimeException("Missing environment variables");
-        }
+        // if null then skip test
+        assumeFalse(nullOrEmpty(accessKey, signingKey, secretKey, arxURL));
         Credential credential = new Credential(accessKey, signingKey, secretKey);
         RetrySettings retry = new RetrySettings(1, Duration.ofSeconds(1), Duration.ofSeconds(1));
         return new Encryption(credential, retry, arxURL, Boolean.FALSE);
@@ -144,5 +144,14 @@ class TestEncryption {
         if (file.exists()) {
             file.delete();
         }
+    }
+
+    private static boolean nullOrEmpty(String ...values) {
+        for (String value : values) {
+            if (value == null || value.isEmpty()) {
+                return true;
+            }
+        }
+        return false;
     }
 }
